@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int,  resultCode: Int, data: Intent?){
         if(requestCode == CAM_INTENT){
             setPic()
+            convert_btn.isEnabled = true
         }
     }
 
