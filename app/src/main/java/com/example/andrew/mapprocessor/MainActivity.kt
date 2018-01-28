@@ -12,17 +12,14 @@ import android.view.MenuItem
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import java.io.File
 import android.os.StrictMode
 import android.support.v4.content.FileProvider
-import java.io.IOException
 import java.text.SimpleDateFormat
+import java.io.*
 import java.util.*
 import android.graphics.BitmapFactory
 import android.support.v4.content.ContextCompat.startActivity
-
-
-
+import android.R.attr.src
 
 
 class MainActivity : AppCompatActivity() {
@@ -53,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         return image
     }
 
-    private fun createImageCopy(srcImg:File): File {
+    private fun createImageCopy(srcImg:File): String? {
 
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val srcImageFileName = srcImg.name
@@ -66,7 +63,29 @@ class MainActivity : AppCompatActivity() {
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.absolutePath
 
-        return image
+
+        val fin = FileInputStream(srcImg)
+        try {
+            val out = FileOutputStream(image)
+            try {
+                // Transfer bytes from in to out
+                val buf = ByteArray(1024)
+
+                while (true) {
+                    var len = fin.read(buf)
+                    if(len <= 0){
+                        break
+                    }
+                    out.write(buf, 0, len)
+                }
+            } finally {
+                out.close()
+            }
+        } finally {
+            fin.close()
+        }
+        var dir = mCurrentPhotoPath
+        return dir
     }
 
     private fun setPic() {
@@ -124,7 +143,8 @@ class MainActivity : AppCompatActivity() {
         convert_btn.setOnClickListener {
             Toast.makeText(this, "Converting image", Toast.LENGTH_SHORT).show()
             val convertIntent = Intent(this, ConvertActivity::class.java)
-            //convertIntent.putExtra("key", img) //TODO: PASS IMAGE HERE
+            var cpy_img_path = createImageCopy(photoFile!!)
+            convertIntent.putExtra("img", cpy_img_path)
             this.startActivity(convertIntent)
         }
     }
