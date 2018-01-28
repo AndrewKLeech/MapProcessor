@@ -1,5 +1,6 @@
 package com.example.andrew.mapprocessor
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,7 +10,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.io.File
@@ -19,24 +19,50 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import android.graphics.BitmapFactory
+import android.support.v4.content.ContextCompat.startActivity
+
+
 
 
 
 class MainActivity : AppCompatActivity() {
     var mCurrentPhotoPath: String? = null
     var CAM_INTENT = 1;
+    var photoFile: File? = null
+    @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
+
+
+
     private fun createImageFile(): File {
+
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         // Create an image file name
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = "JPEG_" + timeStamp + "_"
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
         val image = File.createTempFile(
                 imageFileName, /* prefix */
                 ".jpg", /* suffix */
                 storageDir      /* directory */
         )
 
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = image.absolutePath
+
+        return image
+    }
+
+    private fun createImageCopy(srcImg:File): File {
+
+        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val srcImageFileName = srcImg.name
+        val cpyImageFileName = "COPY_" + srcImageFileName
+        val image = File.createTempFile(
+                cpyImageFileName, /* prefix */
+                ".jpg", /* suffix */
+                storageDir      /* directory */
+        )
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.absolutePath
 
@@ -78,7 +104,7 @@ class MainActivity : AppCompatActivity() {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             if (takePictureIntent.resolveActivity(packageManager) != null) {
                 // Create the File where the photo should go
-                var photoFile: File? = null
+
                 try {
                     photoFile = createImageFile()
                 }
@@ -94,6 +120,12 @@ class MainActivity : AppCompatActivity() {
                 }
 
             }
+        }
+        convert_btn.setOnClickListener {
+            Toast.makeText(this, "Converting image", Toast.LENGTH_SHORT).show()
+            val convertIntent = Intent(this, ConvertActivity::class.java)
+            //convertIntent.putExtra("key", img) //TODO: PASS IMAGE HERE
+            this.startActivity(convertIntent)
         }
     }
 
