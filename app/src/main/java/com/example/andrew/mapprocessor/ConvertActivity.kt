@@ -46,7 +46,8 @@ class ConvertActivity : AppCompatActivity() {
         bmOptions.inPurgeable = true
 
         val bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-        convert_map_img_view.setImageBitmap(bitmap)
+        val bitmapconv =  PrepImage(bitmap)
+        convert_map_img_view.setImageBitmap(bitmapconv)
     }
 
 
