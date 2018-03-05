@@ -1,5 +1,5 @@
 package com.example.andrew.mapprocessor
-
+import org.opencv.core.Mat
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.StrictMode
@@ -8,11 +8,22 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import java.io.IOException
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.widget.Toast
 import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.convert_screen.*
 import android.opengl.ETC1.getWidth
+import android.util.Log
+import org.opencv.android.OpenCVLoader
+import org.opencv.android.LoaderCallbackInterface
+import org.opencv.android.BaseLoaderCallback
+import org.opencv.android.Utils
+import org.opencv.core.Core
+import org.opencv.core.Scalar
+
+import org.opencv.imgproc.Imgproc
+import org.opencv.core.CvType
 
 
 
@@ -22,6 +33,7 @@ import android.opengl.ETC1.getWidth
  */
 
 class ConvertActivity : AppCompatActivity() {
+
     var mCurrentPhotoPath: String? = null
     var CAM_INTENT = 1;
     var photoFile: File? = null
@@ -52,6 +64,10 @@ class ConvertActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+            if (!OpenCVLoader.initDebug()) {
+                // Handle initialization error
+            }
         val intent = intent
         mCurrentPhotoPath = intent.getStringExtra("img")
 
@@ -69,5 +85,39 @@ class ConvertActivity : AppCompatActivity() {
             setPic()
         }
 
+    }
+
+    fun PrepImage(src: Bitmap): Bitmap {
+
+        var cpy = src.copy(src.config, true)
+        var pixels = IntArray(cpy.height *cpy.width)
+        cpy.getPixels(pixels, 0, cpy.width, 0, 0, cpy.width, cpy.height)
+        //http://bagawerexecinux.cf/1305539/6566619/137c6080a-android-colorrgb-to-hsv-83344
+        var mat = Mat()
+        var cpyMat = Mat()
+        var equCpy = Mat()
+
+        val bmp32 = src.copy(Bitmap.Config.ARGB_8888, true)
+        Utils.bitmapToMat(bmp32, mat)
+        Imgproc.cvtColor(mat, cpyMat, Imgproc.COLOR_BGR2HSV, 3) //3 is HSV Channel
+        var findBlack = Mat()
+        var findWhite = Mat()
+        var whiteInv = Mat()
+        var outMat = Mat()
+        cpyMat.copyTo(findBlack)
+        cpyMat.copyTo(findWhite)
+        cpyMat.copyTo(equCpy)
+        //Imgproc.equalizeHist(cpyMat,equCpy)
+        //V<0.25
+        Core.inRange(equCpy, Scalar(0.0, 0.0, 80.0), Scalar(180.0, 255.0, 255.0), findBlack)
+        //S<0.20 AND V>0.60
+        Core.inRange(equCpy, Scalar(0.0, 0.0, 153.0), Scalar(180.0, 51.0, 255.0), findWhite)
+        System.out.println("TEMP")
+        //System.out.println(findWhite.dump())
+
+        //whiteInv = findWhite.inv()
+        Core.add(findBlack, findWhite, outMat)
+        Utils.matToBitmap(findWhite, cpy)
+        return cpy
     }
 }
