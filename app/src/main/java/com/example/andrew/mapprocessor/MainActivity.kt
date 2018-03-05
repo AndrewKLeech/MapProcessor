@@ -20,17 +20,23 @@ import java.util.*
 import android.graphics.BitmapFactory
 import android.support.v4.content.ContextCompat.startActivity
 import android.R.attr.src
+import android.hardware.Camera
+import android.support.constraint.ConstraintLayout
+import android.util.Log
+import android.util.Size
+import android.view.SurfaceHolder
+import android.widget.FrameLayout
 
 
 class MainActivity : AppCompatActivity() {
     var mCurrentPhotoPath: String? = null
-    var CAM_INTENT = 1;
+    var CAM_INTENT = 1
     var photoFile: File? = null
+
+    var mCamera:Camera? = null
+    var mPreview:Preview? = null
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
-
-
-
     private fun createImageFile(): File {
 
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -119,6 +125,18 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
+
+        try{
+            mCamera = Camera.open()
+        } catch (e:Exception){
+            Log.d("ERROR", "Failed to get camera: " + e.message)
+        }
+        if(mCamera != null){
+            mPreview = Preview(this, mCamera!!)//create a surfaceview
+            camera_view.addView(mPreview)
+        }
+
+
         capture_btn.setOnClickListener {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             if (takePictureIntent.resolveActivity(packageManager) != null) {
