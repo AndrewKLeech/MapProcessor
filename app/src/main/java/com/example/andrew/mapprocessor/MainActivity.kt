@@ -28,12 +28,14 @@ import android.view.SurfaceHolder
 import android.widget.FrameLayout
 
 
+
 class MainActivity : AppCompatActivity() {
     var mCurrentPhotoPath: String? = null
     var CAM_INTENT = 1
     var photoFile: File? = null
 
     var mCamera:Camera? = null
+
     var mPreview:Preview? = null
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
@@ -138,26 +140,27 @@ class MainActivity : AppCompatActivity() {
 
 
         capture_btn.setOnClickListener {
-            val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            if (takePictureIntent.resolveActivity(packageManager) != null) {
-                // Create the File where the photo should go
+            try {
+                photoFile = createImageFile()
+            } catch (e: IOException) {
+                Log.d("ERROR", "Could not create file " + e.message)
+            }
+
+            mCamera!!.takePicture(null, null, Camera.PictureCallback { data, mCamera ->
 
                 try {
-                    photoFile = createImageFile()
+                    val fos = FileOutputStream(photoFile)
+                    fos.write(data)
+                    fos.close()
+                    convert_btn.isEnabled = true
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
-                catch (e:IOException) {
-                    Toast.makeText(this, "Error occured while creating File", Toast.LENGTH_SHORT).show()
-                }
-
-                // Continue only if the File was successfully created
-                if (photoFile != null) {
-                    var photoURI: Uri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFile)
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivityForResult(takePictureIntent, CAM_INTENT)
-                }
-
-            }
+            })
         }
+
         convert_btn.setOnClickListener {
             Toast.makeText(this, "Converting image", Toast.LENGTH_SHORT).show()
             val convertIntent = Intent(this, ConvertActivity::class.java)
