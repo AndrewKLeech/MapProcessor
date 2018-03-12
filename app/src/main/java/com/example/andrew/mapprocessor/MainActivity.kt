@@ -2,10 +2,8 @@ package com.example.andrew.mapprocessor
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -13,56 +11,48 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import android.os.StrictMode
-import android.support.v4.content.FileProvider
 import java.text.SimpleDateFormat
 import java.io.*
 import java.util.*
 import android.graphics.BitmapFactory
-import android.support.v4.content.ContextCompat.startActivity
-import android.R.attr.src
 import android.hardware.Camera
-import android.support.constraint.ConstraintLayout
 import android.util.Log
-import android.util.Size
-import android.view.SurfaceHolder
-import android.widget.FrameLayout
-
-
+import android.view.View
 
 class MainActivity : AppCompatActivity() {
     var mCurrentPhotoPath: String? = null
-    var CAM_INTENT = 1
     var photoFile: File? = null
-
     var mCamera:Camera? = null
-
     var mPreview:Preview? = null
+
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
+    // Create an empty .JPEG file that will be used to store the picture taken
+    // The name if the file will be JPEG_yyyyMMdd_HHmmSS_.jpg
     private fun createImageFile(): File {
-
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         // Create an image file name
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = "JPEG_" + timeStamp + "_"
-
+        // Create empty file
         val image = File.createTempFile(
                 imageFileName, /* prefix */
                 ".jpg", /* suffix */
                 storageDir      /* directory */
         )
-
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.absolutePath
-
         return image
     }
 
+    // Create copy of the image so that orignal image can be saved
     private fun createImageCopy(srcImg:File): String? {
-
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        // Get name of source image file
         val srcImageFileName = srcImg.name
-        val cpyImageFileName = "COPY_" + srcImageFileName
+        // Create new string of "COPY_" plus the orignal file name
+        val cpyImageFileName = "COPY_$srcImageFileName"
+        // Create new blank .jpg file
         val image = File.createTempFile(
                 cpyImageFileName, /* prefix */
                 ".jpg", /* suffix */
@@ -71,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.absolutePath
 
-
+        // Copy orignal image to new image file
         val fin = FileInputStream(srcImg)
         try {
             val out = FileOutputStream(image)
@@ -96,31 +86,6 @@ class MainActivity : AppCompatActivity() {
         return dir
     }
 
-    private fun setPic() {
-        // Get the dimensions of the View
-        Toast.makeText(this, "Setting picture", Toast.LENGTH_SHORT).show()
-        val targetW = captured_map_image.getWidth()
-        val targetH = captured_map_image.getHeight()
-
-        // Get the dimensions of the bitmap
-        val bmOptions = BitmapFactory.Options()
-        bmOptions.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-        val photoW = bmOptions.outWidth
-        val photoH = bmOptions.outHeight
-
-        // Determine how much to scale down the image
-        val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false
-        bmOptions.inSampleSize = scaleFactor
-        bmOptions.inPurgeable = true
-
-        val bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-        captured_map_image.setImageBitmap(bitmap)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -128,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
+        // Try load camera
         try{
             mCamera = Camera.open()
         } catch (e:Exception){
@@ -138,16 +104,17 @@ class MainActivity : AppCompatActivity() {
             camera_view.addView(mPreview)
         }
 
-
+        // On click listener for capture button (capture_btn)
         capture_btn.setOnClickListener {
+            // Try create new blank .jpg file
             try {
                 photoFile = createImageFile()
             } catch (e: IOException) {
                 Log.d("ERROR", "Could not create file " + e.message)
             }
-
+            // Get current frame on camera and set the blank .jpg file as the frame
             mCamera!!.takePicture(null, null, Camera.PictureCallback { data, mCamera ->
-
+                // Try set file (photoFile) as frame (data)
                 try {
                     val fos = FileOutputStream(photoFile)
                     fos.write(data)
@@ -160,20 +127,24 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
-
+        // On click listener for convert button (convert_btn)
         convert_btn.setOnClickListener {
             Toast.makeText(this, "Converting image", Toast.LENGTH_SHORT).show()
+            // Intent for convert activity
             val convertIntent = Intent(this, ConvertActivity::class.java)
-            var cpy_img_path = createImageCopy(photoFile!!)
+            // Create copy of image taken and get the path
+            val cpy_img_path = createImageCopy(photoFile!!)
+            // Send image path as extra in intent
             convertIntent.putExtra("img", cpy_img_path)
+            // Start convert intent
             this.startActivity(convertIntent)
         }
-    }
 
-    override fun onActivityResult(requestCode: Int,  resultCode: Int, data: Intent?){
-        if(requestCode == CAM_INTENT){
-            setPic()
-            convert_btn.isEnabled = true
+        tweak_filter_btn.setOnClickListener{
+            value_textbox.visibility = View.VISIBLE
+            valSeekBar.visibility = View.VISIBLE
+            saturation_txt_box.visibility = View.VISIBLE
+            satSeekBar.visibility = View.VISIBLE
         }
     }
 
@@ -189,7 +160,7 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_edit_range -> true
             else -> super.onOptionsItemSelected(item)
         }
     }

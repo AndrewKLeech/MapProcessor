@@ -62,6 +62,4 @@ class Preview(context: Context, camera:Camera) : SurfaceView(context), SurfaceHo
             Log.d("ERROR", "Camera error on surfaceCreated while trying to set or start preview " + e.message)
         }
     }
-
-
 }
