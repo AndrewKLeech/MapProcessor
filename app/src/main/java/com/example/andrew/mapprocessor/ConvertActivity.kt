@@ -15,6 +15,7 @@ import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.convert_screen.*
 import android.opengl.ETC1.getWidth
 import android.util.Log
+import android.widget.SeekBar
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.LoaderCallbackInterface
 import org.opencv.android.BaseLoaderCallback
@@ -35,8 +36,11 @@ import org.opencv.core.CvType
 class ConvertActivity : AppCompatActivity() {
 
     var mCurrentPhotoPath: String? = null
-    var CAM_INTENT = 1;
     var photoFile: File? = null
+    var hsV_lower = 80.0
+    var hsV_upper = 255
+    var hSv_lower = 0
+    var hSv_upper = 0
 
     private fun setPic() {
         // Get the dimensions of the View
@@ -62,12 +66,11 @@ class ConvertActivity : AppCompatActivity() {
         convert_map_img_view.setImageBitmap(bitmapconv)
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
-            if (!OpenCVLoader.initDebug()) {
-                // Handle initialization error
-            }
+        if (!OpenCVLoader.initDebug()) {
+            // Handle initialization error
+        }
         val intent = intent
         mCurrentPhotoPath = intent.getStringExtra("img")
 
@@ -77,6 +80,20 @@ class ConvertActivity : AppCompatActivity() {
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
+        valSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                // TODO Auto-generated method stub
+                hsV_lower = valSeekBar.verticalScrollbarPosition.toDouble()
+            }
+        })
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -109,7 +126,7 @@ class ConvertActivity : AppCompatActivity() {
         cpyMat.copyTo(equCpy)
         //Imgproc.equalizeHist(cpyMat,equCpy)
         //V<0.25
-        Core.inRange(equCpy, Scalar(0.0, 0.0, 80.0), Scalar(180.0, 255.0, 255.0), findBlack)
+        Core.inRange(equCpy, Scalar(0.0, 0.0, hsV_lower), Scalar(180.0, 255.0, 255.0), findBlack)
         //S<0.20 AND V>0.60
         Core.inRange(equCpy, Scalar(0.0, 0.0, 153.0), Scalar(180.0, 51.0, 255.0), findWhite)
         System.out.println("TEMP")

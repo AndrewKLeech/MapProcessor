@@ -14,7 +14,6 @@ import android.os.StrictMode
 import java.text.SimpleDateFormat
 import java.io.*
 import java.util.*
-import android.graphics.BitmapFactory
 import android.hardware.Camera
 import android.util.Log
 import android.view.View
@@ -24,67 +23,9 @@ class MainActivity : AppCompatActivity() {
     var photoFile: File? = null
     var mCamera:Camera? = null
     var mPreview:Preview? = null
-
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
-    // Create an empty .JPEG file that will be used to store the picture taken
-    // The name if the file will be JPEG_yyyyMMdd_HHmmSS_.jpg
-    private fun createImageFile(): File {
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        // Create an image file name
-        val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_"
-        // Create empty file
-        val image = File.createTempFile(
-                imageFileName, /* prefix */
-                ".jpg", /* suffix */
-                storageDir      /* directory */
-        )
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.absolutePath
-        return image
-    }
 
-    // Create copy of the image so that orignal image can be saved
-    private fun createImageCopy(srcImg:File): String? {
-        val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        // Get name of source image file
-        val srcImageFileName = srcImg.name
-        // Create new string of "COPY_" plus the orignal file name
-        val cpyImageFileName = "COPY_$srcImageFileName"
-        // Create new blank .jpg file
-        val image = File.createTempFile(
-                cpyImageFileName, /* prefix */
-                ".jpg", /* suffix */
-                storageDir      /* directory */
-        )
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.absolutePath
-
-        // Copy orignal image to new image file
-        val fin = FileInputStream(srcImg)
-        try {
-            val out = FileOutputStream(image)
-            try {
-                // Transfer bytes from in to out
-                val buf = ByteArray(1024)
-
-                while (true) {
-                    var len = fin.read(buf)
-                    if(len <= 0){
-                        break
-                    }
-                    out.write(buf, 0, len)
-                }
-            } finally {
-                out.close()
-            }
-        } finally {
-            fin.close()
-        }
-        var dir = mCurrentPhotoPath
-        return dir
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +33,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
-
         // Try load camera
         try{
             mCamera = Camera.open()
@@ -103,12 +43,12 @@ class MainActivity : AppCompatActivity() {
             mPreview = Preview(this, mCamera!!)//create a surfaceview
             camera_view.addView(mPreview)
         }
-
-        // On click listener for capture button (capture_btn)
-        capture_btn.setOnClickListener {
+        // On click listener for capture image (capture_img)
+        capture_img.setOnClickListener {
             // Try create new blank .jpg file
             try {
-                photoFile = createImageFile()
+                photoFile = ImageHandler().createImageFile(this)
+                mCurrentPhotoPath = photoFile!!.absolutePath
             } catch (e: IOException) {
                 Log.d("ERROR", "Could not create file " + e.message)
             }
@@ -119,7 +59,9 @@ class MainActivity : AppCompatActivity() {
                     val fos = FileOutputStream(photoFile)
                     fos.write(data)
                     fos.close()
-                    convert_btn.isEnabled = true
+                    capture_img.visibility = View.INVISIBLE
+                    done_img.visibility = View.VISIBLE
+                    clear_img.visibility = View.VISIBLE
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                 } catch (e: IOException) {
@@ -128,26 +70,43 @@ class MainActivity : AppCompatActivity() {
             })
         }
         // On click listener for convert button (convert_btn)
-        convert_btn.setOnClickListener {
+        done_img.setOnClickListener {
             Toast.makeText(this, "Converting image", Toast.LENGTH_SHORT).show()
             // Intent for convert activity
             val convertIntent = Intent(this, ConvertActivity::class.java)
             // Create copy of image taken and get the path
-            val cpy_img_path = createImageCopy(photoFile!!)
-            // Send image path as extra in intent
+            val cpy_img_path = ImageHandler().createImageCopy(photoFile!!, this)
+            // Send original image path as extra in intent
+            convertIntent.putExtra("src", mCurrentPhotoPath)
+            // Send copy image path as extra in intent
             convertIntent.putExtra("img", cpy_img_path)
             // Start convert intent
             this.startActivity(convertIntent)
         }
+        clear_img.setOnClickListener {
 
-        tweak_filter_btn.setOnClickListener{
-            value_textbox.visibility = View.VISIBLE
-            valSeekBar.visibility = View.VISIBLE
-            saturation_txt_box.visibility = View.VISIBLE
-            satSeekBar.visibility = View.VISIBLE
+
+                mCamera!!.startPreview()
+            capture_img.visibility = View.VISIBLE
+            done_img.visibility = View.INVISIBLE
+            clear_img.visibility = View.INVISIBLE
+
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Try load camera
+        try{
+            mCamera = Camera.open()
+        } catch (e:Exception){
+            Log.d("ERROR", "Failed to get camera: " + e.message)
+        }
+        if(mCamera != null){
+            mPreview = Preview(this, mCamera!!)//create a surfaceview
+            camera_view.addView(mPreview)
+        }
+    }
     //menu
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.

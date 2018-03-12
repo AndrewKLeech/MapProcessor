@@ -9,101 +9,75 @@
     tools:layout_editor_absoluteY="81dp"
     tools:showIn="@layout/activity_main">
 
-    <Button
-        android:id="@+id/capture_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/capture_btn"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/convert_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:enabled="false"
-        android:text="@string/convert_btn"
-        android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <FrameLayout
         android:id="@+id/camera_view"
         android:layout_width="380dp"
-        android:layout_height="531dp"
+        android:layout_height="502dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.466"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintVertical_bias="0.121">
 
     </FrameLayout>
 
-    <SeekBar
-        android:id="@+id/valSeekBar"
-        android:layout_width="300dp"
-        android:layout_height="16dp"
-        android:layout_marginEnd="8dp"
+    <ImageView
+        android:id="@+id/cam_toolbar_img"
+        android:layout_width="411dp"
+        android:layout_height="84dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="20dp"
-        android:max="255"
-        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/satSeekBar" />
+        app:srcCompat="@android:color/background_dark" />
 
-    <SeekBar
-        android:id="@+id/satSeekBar"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:max="255"
-        android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/camera_view" />
-
-    <TextView
-        android:id="@+id/saturation_txt_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/saturation_txt"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/satSeekBar"
-        app:layout_constraintStart_toStartOf="@+id/satSeekBar" />
-
-    <TextView
-        android:id="@+id/value_textbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="@string/value_txt"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/valSeekBar"
-        app:layout_constraintStart_toStartOf="@+id/valSeekBar" />
-
-    <Button
-        android:id="@+id/tweak_filter_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/capture_img"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:text="@string/tweak_flter_btn_txt"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/convert_btn"
-        app:layout_constraintStart_toEndOf="@+id/capture_btn" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_adjust_black_24dp" />
+
+    <ImageView
+        android:id="@+id/done_img"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/cam_toolbar_img"
+        app:layout_constraintStart_toEndOf="@+id/capture_img"
+        app:srcCompat="@drawable/ic_done_white_24dp" />
+
+    <ImageView
+        android:id="@+id/clear_img"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/capture_img"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/ic_clear_white_24dp" />
 
 
 </android.support.constraint.ConstraintLayout>

@@ -26,5 +26,47 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:color/transparent" />
 
+    <TextView
+        android:id="@+id/value_textbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/value_txt"
+        app:layout_constraintBottom_toTopOf="@+id/valSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/valSeekBar" />
+
+    <TextView
+        android:id="@+id/saturation_txt_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/saturation_txt"
+        app:layout_constraintBottom_toTopOf="@+id/satSeekBar"
+        app:layout_constraintStart_toStartOf="@+id/satSeekBar" />
+
+    <SeekBar
+        android:id="@+id/satSeekBar"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:max="255"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/camera_view" />
+
+    <SeekBar
+        android:id="@+id/valSeekBar"
+        android:layout_width="300dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:max="255"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/satSeekBar" />
+
 
 </android.support.constraint.ConstraintLayout >
