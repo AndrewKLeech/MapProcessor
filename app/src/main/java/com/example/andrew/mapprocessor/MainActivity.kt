@@ -3,7 +3,6 @@ package com.example.andrew.mapprocessor
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.os.Environment
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -11,9 +10,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import android.os.StrictMode
-import java.text.SimpleDateFormat
 import java.io.*
-import java.util.*
 import android.hardware.Camera
 import android.util.Log
 import android.view.View
@@ -72,6 +69,10 @@ class MainActivity : AppCompatActivity() {
         // On click listener for convert button (convert_btn)
         done_img.setOnClickListener {
             Toast.makeText(this, "Converting image", Toast.LENGTH_SHORT).show()
+            // Reset image buttons so if user goes back they are set right
+            capture_img.visibility = View.VISIBLE
+            done_img.visibility = View.INVISIBLE
+            clear_img.visibility = View.INVISIBLE
             // Intent for convert activity
             val convertIntent = Intent(this, ConvertActivity::class.java)
             // Create copy of image taken and get the path
@@ -84,13 +85,11 @@ class MainActivity : AppCompatActivity() {
             this.startActivity(convertIntent)
         }
         clear_img.setOnClickListener {
-
-
-                mCamera!!.startPreview()
+            // Restart the preview
+            mCamera!!.startPreview()
             capture_img.visibility = View.VISIBLE
             done_img.visibility = View.INVISIBLE
             clear_img.visibility = View.INVISIBLE
-
         }
     }
 

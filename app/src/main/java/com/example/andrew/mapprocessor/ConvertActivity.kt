@@ -1,33 +1,21 @@
 package com.example.andrew.mapprocessor
+
 import org.opencv.core.Mat
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.StrictMode
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
-import java.io.IOException
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.widget.Toast
-import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.convert_screen.*
-import android.opengl.ETC1.getWidth
-import android.util.Log
 import android.widget.SeekBar
 import org.opencv.android.OpenCVLoader
-import org.opencv.android.LoaderCallbackInterface
-import org.opencv.android.BaseLoaderCallback
 import org.opencv.android.Utils
 import org.opencv.core.Core
 import org.opencv.core.Scalar
 
 import org.opencv.imgproc.Imgproc
-import org.opencv.core.CvType
-
-
-
 
 /**
  * Created by Andrew on 28/01/2018.
@@ -35,6 +23,7 @@ import org.opencv.core.CvType
 
 class ConvertActivity : AppCompatActivity() {
 
+    private var mSrcPhotoPath: String? = null
     var mCurrentPhotoPath: String? = null
     var photoFile: File? = null
     var hsV_lower = 80.0
@@ -42,7 +31,7 @@ class ConvertActivity : AppCompatActivity() {
     var hSv_lower = 0
     var hSv_upper = 0
 
-    private fun setPic() {
+    private fun setPic(path: String) {
         // Get the dimensions of the View
         val targetW = convert_map_img_view.width
         val targetH = convert_map_img_view.height
@@ -50,7 +39,7 @@ class ConvertActivity : AppCompatActivity() {
         // Get the dimensions of the bitmap
         val bmOptions = BitmapFactory.Options()
         bmOptions.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
+        BitmapFactory.decodeFile(path, bmOptions)
         val photoW = bmOptions.outWidth
         val photoH = bmOptions.outHeight
         // Determine how much to scale down the image
@@ -61,8 +50,10 @@ class ConvertActivity : AppCompatActivity() {
         bmOptions.inSampleSize = scaleFactor
         bmOptions.inPurgeable = true
 
-        val bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions)
-        val bitmapconv =  PrepImage(bitmap)
+        val bitmap = BitmapFactory.decodeFile(path, bmOptions)
+        val bitmap_cpy = bitmap.copy(bitmap.config, true)
+        val bitmapconv =  PrepImage(bitmap_cpy)
+
         convert_map_img_view.setImageBitmap(bitmapconv)
     }
 
@@ -72,6 +63,7 @@ class ConvertActivity : AppCompatActivity() {
             // Handle initialization error
         }
         val intent = intent
+        mSrcPhotoPath = intent.getStringExtra("src")
         mCurrentPhotoPath = intent.getStringExtra("img")
 
         super.onCreate(savedInstanceState)
@@ -83,6 +75,9 @@ class ConvertActivity : AppCompatActivity() {
         valSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 // TODO Auto-generated method stub
+                mCurrentPhotoPath = mSrcPhotoPath
+                hsV_lower = valSeekBar.progress.toDouble()
+                setPic(mCurrentPhotoPath!!)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -91,7 +86,6 @@ class ConvertActivity : AppCompatActivity() {
 
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 // TODO Auto-generated method stub
-                hsV_lower = valSeekBar.verticalScrollbarPosition.toDouble()
             }
         })
     }
@@ -99,7 +93,7 @@ class ConvertActivity : AppCompatActivity() {
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
-            setPic()
+            setPic(mCurrentPhotoPath!!)
         }
 
     }
@@ -134,7 +128,7 @@ class ConvertActivity : AppCompatActivity() {
 
         //whiteInv = findWhite.inv()
         Core.add(findBlack, findWhite, outMat)
-        Utils.matToBitmap(findWhite, cpy)
+        Utils.matToBitmap(findBlack, cpy)
         return cpy
     }
 }
