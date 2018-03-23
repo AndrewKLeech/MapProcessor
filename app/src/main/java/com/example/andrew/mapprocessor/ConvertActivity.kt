@@ -1,5 +1,6 @@
 package com.example.andrew.mapprocessor
 
+import android.content.Intent
 import org.opencv.core.Mat
 import android.os.Bundle
 import android.os.StrictMode
@@ -19,18 +20,19 @@ import org.opencv.core.Scalar
 import org.opencv.imgproc.Imgproc
 
 /**
- * Created by Andrew on 28/01/2018.
- */
+* Created by Andrew on 28/01/2018.
+*/
 
 class ConvertActivity : AppCompatActivity() {
 
     private var mSrcPhotoPath: String? = null
     var mCurrentPhotoPath: String? = null
+    // Bitmap of segmented image
+    var bitmapconv: Bitmap? = null
     var photoFile: File? = null
     var hsV_lower = 89.0
     var hsV_upper = 106.0
     var hSv_lower = 0.0
-    var hSv_upper = 0
 
     private fun setPic(path: String) {
         // Get the dimensions of the View
@@ -53,7 +55,7 @@ class ConvertActivity : AppCompatActivity() {
 
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
         val bitmap_cpy = bitmap.copy(bitmap.config, true)
-        val bitmapconv =  PrepImage(bitmap_cpy)
+        bitmapconv =  PrepImage(bitmap_cpy)
 
         convert_map_img_view.setImageBitmap(bitmapconv)
     }
@@ -109,6 +111,9 @@ class ConvertActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
                 // TODO Auto-generated method stub
             }
+        })
+        done_seg_img_btn.setOnClickListener({
+
         })
     }
 

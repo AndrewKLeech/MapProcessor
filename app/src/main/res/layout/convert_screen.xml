@@ -39,19 +39,18 @@
 
     <SeekBar
         android:id="@+id/valLowerSeekBar"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:max="255"
         app:layout_constraintBottom_toTopOf="@+id/valUpperSeekBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.882"
         app:layout_constraintStart_toStartOf="parent" />
 
     <SeekBar
         android:id="@+id/valUpperSeekBar"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
@@ -59,7 +58,6 @@
         android:max="255"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.882"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -72,6 +70,15 @@
         android:textSize="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/valUpperSeekBar" />
+
+    <ImageView
+        android:id="@+id/done_seg_img_btn"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_done_black_24dp" />
 
 
 </android.support.constraint.ConstraintLayout >
