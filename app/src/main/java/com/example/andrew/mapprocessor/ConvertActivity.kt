@@ -73,6 +73,11 @@ class ConvertActivity : AppCompatActivity() {
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
+        // Set starting progress of Value min bar to hsV_lower
+        valLowerSeekBar.progress = hsV_lower.toInt()
+        // Set starting progress of Value max bar to hsV_upper
+        valUpperSeekBar.progress = hsV_upper.toInt()
+
         valLowerSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 // TODO Auto-generated method stub
@@ -96,22 +101,6 @@ class ConvertActivity : AppCompatActivity() {
                 hsV_upper = valUpperSeekBar.progress.toDouble()
                 setPic(mCurrentPhotoPath!!)
                 Log.d("I", "Value is: " + hsV_upper.toString())
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar) {
-                // TODO Auto-generated method stub
-            }
-
-            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                // TODO Auto-generated method stub
-            }
-        })
-        satSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onStopTrackingTouch(seekBar: SeekBar) {
-                // TODO Auto-generated method stub
-                mCurrentPhotoPath = mSrcPhotoPath
-                hSv_lower = satSeekBar.progress.toDouble()
-                setPic(mCurrentPhotoPath!!)
-                Log.d("I", "Value is: " + hSv_lower.toString())
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {
                 // TODO Auto-generated method stub

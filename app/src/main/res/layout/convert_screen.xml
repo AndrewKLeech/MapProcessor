@@ -31,31 +31,11 @@
         android:id="@+id/value_textbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="@string/value_lower_txt"
-        app:layout_constraintEnd_toStartOf="@+id/valLowerSeekBar"
-        tools:layout_editor_absoluteY="461dp" />
-
-    <TextView
-        android:id="@+id/saturation_txt_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:text="@string/saturation_txt"
-        app:layout_constraintEnd_toStartOf="@+id/satSeekBar"
-        tools:layout_editor_absoluteY="492dp" />
-
-    <SeekBar
-        android:id="@+id/satSeekBar"
-        android:layout_width="300dp"
-        android:layout_height="11dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:max="255"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.882"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textSize="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintEnd_toStartOf="@+id/valLowerSeekBar" />
 
     <SeekBar
         android:id="@+id/valLowerSeekBar"
@@ -64,10 +44,9 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:max="255"
-        android:progress="80"
         app:layout_constraintBottom_toTopOf="@+id/valUpperSeekBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.75"
+        app:layout_constraintHorizontal_bias="0.882"
         app:layout_constraintStart_toStartOf="parent" />
 
     <SeekBar
@@ -78,8 +57,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:max="255"
-        android:progress="255"
-        app:layout_constraintBottom_toBottomOf="@+id/satSeekBar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.882"
         app:layout_constraintStart_toStartOf="parent" />
@@ -88,10 +66,12 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="4dp"
         android:text="@string/value_upper_txt"
-        app:layout_constraintEnd_toStartOf="@+id/valUpperSeekBar"
-        tools:layout_editor_absoluteY="476dp" />
+        android:textSize="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/valUpperSeekBar" />
 
 
 </android.support.constraint.ConstraintLayout >
