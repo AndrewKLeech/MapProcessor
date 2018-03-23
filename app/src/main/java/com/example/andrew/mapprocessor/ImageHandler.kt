@@ -1,5 +1,6 @@
 package com.example.andrew.mapprocessor
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Environment
 import java.io.File
@@ -9,8 +10,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Created by Andrew on 12/03/2018.
- */
+* Created by Andrew on 12/03/2018.
+*/
 class ImageHandler {
     // Create copy of the image so that orignal image can be saved
     fun createImageCopy(srcImg: File, ctx: Context): String? {
@@ -52,7 +53,8 @@ class ImageHandler {
         return dir
     }
 
-    // Create an empty .JPEG file that will be used to store the picture taken
+    @SuppressLint("SimpleDateFormat")
+// Create an empty .JPEG file that will be used to store the picture taken
     // The name if the file will be JPEG_yyyyMMdd_HHmmSS_.jpg
     fun createImageFile(ctx: Context): File {
         val storageDir = ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES)

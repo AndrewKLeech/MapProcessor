@@ -2,6 +2,9 @@ package com.example.andrew.mapprocessor
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Matrix
+import android.graphics.Rect
+import android.graphics.RectF
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
@@ -13,7 +16,17 @@ import android.os.StrictMode
 import java.io.*
 import android.hardware.Camera
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import kotlinx.android.synthetic.main.preview.*
+import android.opengl.ETC1.getHeight
+import android.opengl.ETC1.getWidth
+import android.opengl.ETC1.getHeight
+import android.opengl.ETC1.getWidth
+
+
+
+
 
 class MainActivity : AppCompatActivity() {
     var mCurrentPhotoPath: String? = null
@@ -40,6 +53,8 @@ class MainActivity : AppCompatActivity() {
             mPreview = Preview(this, mCamera!!)//create a surfaceview
             camera_view.addView(mPreview)
         }
+
+
         // On click listener for capture image (capture_img)
         capture_img.setOnClickListener {
             // Try create new blank .jpg file
