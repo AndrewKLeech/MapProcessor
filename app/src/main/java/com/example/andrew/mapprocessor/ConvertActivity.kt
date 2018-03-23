@@ -8,6 +8,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import kotlinx.android.synthetic.main.convert_screen.*
 import android.widget.SeekBar
 import org.opencv.android.OpenCVLoader
@@ -26,9 +27,9 @@ class ConvertActivity : AppCompatActivity() {
     private var mSrcPhotoPath: String? = null
     var mCurrentPhotoPath: String? = null
     var photoFile: File? = null
-    var hsV_lower = 80.0
-    var hsV_upper = 255
-    var hSv_lower = 0
+    var hsV_lower = 89.0
+    var hsV_upper = 106.0
+    var hSv_lower = 0.0
     var hSv_upper = 0
 
     private fun setPic(path: String) {
@@ -72,14 +73,46 @@ class ConvertActivity : AppCompatActivity() {
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
-        valSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        valLowerSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 // TODO Auto-generated method stub
                 mCurrentPhotoPath = mSrcPhotoPath
-                hsV_lower = valSeekBar.progress.toDouble()
+                hsV_lower = valLowerSeekBar.progress.toDouble()
                 setPic(mCurrentPhotoPath!!)
+                Log.d("I", "Value is: " + hsV_lower.toString())
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
             }
 
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                // TODO Auto-generated method stub
+            }
+        })
+        valUpperSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
+                mCurrentPhotoPath = mSrcPhotoPath
+                hsV_upper = valUpperSeekBar.progress.toDouble()
+                setPic(mCurrentPhotoPath!!)
+                Log.d("I", "Value is: " + hsV_upper.toString())
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                // TODO Auto-generated method stub
+            }
+        })
+        satSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
+                mCurrentPhotoPath = mSrcPhotoPath
+                hSv_lower = satSeekBar.progress.toDouble()
+                setPic(mCurrentPhotoPath!!)
+                Log.d("I", "Value is: " + hSv_lower.toString())
+            }
             override fun onStartTrackingTouch(seekBar: SeekBar) {
                 // TODO Auto-generated method stub
             }
@@ -103,32 +136,30 @@ class ConvertActivity : AppCompatActivity() {
         var cpy = src.copy(src.config, true)
         var pixels = IntArray(cpy.height *cpy.width)
         cpy.getPixels(pixels, 0, cpy.width, 0, 0, cpy.width, cpy.height)
+
         //http://bagawerexecinux.cf/1305539/6566619/137c6080a-android-colorrgb-to-hsv-83344
         var mat = Mat()
         var cpyMat = Mat()
         var equCpy = Mat()
+        var findBlack = Mat()
+        var invMat = Mat()
 
         val bmp32 = src.copy(Bitmap.Config.ARGB_8888, true)
         Utils.bitmapToMat(bmp32, mat)
         Imgproc.cvtColor(mat, cpyMat, Imgproc.COLOR_BGR2HSV, 3) //3 is HSV Channel
-        var findBlack = Mat()
-        var findWhite = Mat()
-        var whiteInv = Mat()
-        var outMat = Mat()
-        cpyMat.copyTo(findBlack)
-        cpyMat.copyTo(findWhite)
-        cpyMat.copyTo(equCpy)
-        //Imgproc.equalizeHist(cpyMat,equCpy)
-        //V<0.25
-        Core.inRange(equCpy, Scalar(0.0, 0.0, hsV_lower), Scalar(180.0, 255.0, 255.0), findBlack)
-        //S<0.20 AND V>0.60
-        Core.inRange(equCpy, Scalar(0.0, 0.0, 153.0), Scalar(180.0, 51.0, 255.0), findWhite)
-        System.out.println("TEMP")
-        //System.out.println(findWhite.dump())
 
-        //whiteInv = findWhite.inv()
-        Core.add(findBlack, findWhite, outMat)
-        Utils.matToBitmap(findBlack, cpy)
+        cpyMat.copyTo(findBlack)
+        cpyMat.copyTo(equCpy)
+        cpyMat.copyTo(invMat)
+
+        // Try get features that we will remove from the image
+        Core.inRange(equCpy, Scalar(0.0, hSv_lower, hsV_lower), Scalar(180.0, 255.0, hsV_upper), findBlack)
+
+        // Invert segmentation
+        Core.bitwise_not(findBlack,invMat)
+
+        // Turn mat into bitmap to display in app
+        Utils.matToBitmap(invMat, cpy)
         return cpy
     }
 }

@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
             } catch (e: IOException) {
                 Log.d("ERROR", "Could not create file " + e.message)
             }
+
             // Get current frame on camera and set the blank .jpg file as the frame
             mCamera!!.takePicture(null, null, Camera.PictureCallback { data, mCamera ->
                 // Try set file (photoFile) as frame (data)
