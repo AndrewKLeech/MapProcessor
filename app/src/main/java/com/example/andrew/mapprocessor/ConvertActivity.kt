@@ -113,7 +113,7 @@ class ConvertActivity : AppCompatActivity() {
             }
         })
         done_seg_img_btn.setOnClickListener({
-
+            thin(bitmapconv!!)
         })
     }
 
@@ -150,10 +150,29 @@ class ConvertActivity : AppCompatActivity() {
         Core.inRange(equCpy, Scalar(0.0, hSv_lower, hsV_lower), Scalar(180.0, 255.0, hsV_upper), findBlack)
 
         // Invert segmentation
-        Core.bitwise_not(findBlack,invMat)
+        //Core.bitwise_not(findBlack,invMat)
 
         // Turn mat into bitmap to display in app
-        Utils.matToBitmap(invMat, cpy)
+        Utils.matToBitmap(findBlack, cpy)
         return cpy
+    }
+
+    fun thin(bitmap: Bitmap){
+        System.out.println("run thin")
+        var mat = Mat()
+
+        System.out.println("run bitmatToMat")
+        Utils.bitmapToMat(bitmap, mat)
+        var channels = List<Mat>(4, {Mat()})
+        Core.split(mat,channels)
+        var ch1 = channels[0]
+        System.out.println("run Thinner.thin")
+        var thinnedMat = Thinner().thin(ch1)
+
+        System.out.println("matToBitmap")
+        var newBitmap = bitmap.copy(bitmap.config,true)
+        Utils.matToBitmap(thinnedMat, newBitmap)
+
+        convert_map_img_view.setImageBitmap(newBitmap)
     }
 }
