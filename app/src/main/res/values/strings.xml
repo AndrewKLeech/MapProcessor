@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MapProcessor</string>
+    <string name="app_name">Maps</string>
     <string name="action_settings">Settings</string>
     <string name="capture_btn">Capture Map</string>
     <string name="convert_btn">Convert</string>
