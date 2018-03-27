@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Maps</string>
+    <string name="action_settings">Settings</string>
+    <string name="capture_btn">Capture Map</string>
+    <string name="convert_btn">Convert</string>
+    <string name="captured_map_image_view_desc">Image of captured map displaid here if one is taken</string>
+    <string name="convert_map_img_view_des">Your image is being converted here</string>
+    <string name="saturation_txt">Saturation</string>
+    <string name="value_lower_txt">Value Lower</string>
+    <string name="HSVSwitch">Edit treshold</string>
+    <string name="action_edit_range_txt">Edit range</string>
+    <string name="tweak_flter_btn_txt">Tweak Filter</string>
+    <string name="value_upper_txt">Value Max</string>
+</resources>
