@@ -161,23 +161,34 @@ class ConvertActivity : AppCompatActivity() {
         return cpy
     }
 
+
+    //Addpted from http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
     fun thin(bitmap: Bitmap){
 
-        //http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
         var mat = Mat()
 
+        // Convert bitmap to mat
         Utils.bitmapToMat(bitmap, mat)
+
+        // Split channels of mat as to only use one
         var channels = List<Mat>(mat.channels(), {Mat()})
         Core.split(mat, channels)
         var ch1 = channels[0]
+
+        // Change values from 0 and 255 to 0 and 1
         Imgproc.threshold(ch1,ch1, 127.0, 255.0, THRESH_BINARY)
+
+        // New mat that will hold the output skeleton
         var skel = Mat.zeros(ch1.size(), ch1.type())
         var temp = Mat(ch1.size(), ch1.type())
 
+
+        // structured element (kernal)
         var element = Imgproc.getStructuringElement(MORPH_CROSS, Size(3.0,3.0))
 
         var done = false
 
+        // Do thinning
         do {
             Imgproc.morphologyEx(ch1, temp, MORPH_OPEN, element)
             Core.bitwise_not(temp, temp)
@@ -186,31 +197,21 @@ class ConvertActivity : AppCompatActivity() {
             Imgproc.erode(ch1, ch1, element)
 
             var max: Double? = null
+
+            // get max value of mat being thinned
             max = Core.minMaxLoc(ch1).maxVal
+
+            // if all values are 0 (max will be 0) exit loop
             done = (max == 0.0)
         }while (!done)
 
+        // Create new bitmap to hold values of skeleton mat
         var newBitmap = bitmap.copy(bitmap.config,true)
+
+        // Turn skeletion mat to bitmap
         Utils.matToBitmap(skel, newBitmap)
 
+        // Display new bitmap
         convert_map_img_view.setImageBitmap(newBitmap)
-
-
-        /*System.out.println("run thin")
-        var mat = Mat()
-
-        System.out.println("run bitmatToMat")
-        Utils.bitmapToMat(bitmap, mat)
-        var channels = List<Mat>(4, {Mat()})
-        Core.split(mat,channels)
-        var ch1 = channels[0]
-        System.out.println("run Thinner.thin")
-        var thinnedMat = Thinner().thin(ch1)
-
-        System.out.println("matToBitmap")
-        var newBitmap = bitmap.copy(bitmap.config,true)
-        Utils.matToBitmap(thinnedMat, newBitmap)
-
-        convert_map_img_view.setImageBitmap(newBitmap)*/
     }
 }
