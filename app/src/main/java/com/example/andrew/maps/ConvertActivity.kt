@@ -14,10 +14,14 @@ import android.widget.SeekBar
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
 import org.opencv.core.Core
+import org.opencv.core.CvType.CV_8UC1
 import org.opencv.core.Scalar
+import org.opencv.core.Size
+import org.opencv.engine.OpenCVEngineInterface
 
 
 import org.opencv.imgproc.Imgproc
+import org.opencv.imgproc.Imgproc.*
 
 /**
 * Created by Andrew on 28/01/2018.
@@ -158,7 +162,41 @@ class ConvertActivity : AppCompatActivity() {
     }
 
     fun thin(bitmap: Bitmap){
-        System.out.println("run thin")
+
+        //http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
+        var mat = Mat()
+
+        Utils.bitmapToMat(bitmap, mat)
+        var channels = List<Mat>(mat.channels(), {Mat()})
+        Core.split(mat, channels)
+        var ch1 = channels[0]
+        Imgproc.threshold(ch1,ch1, 127.0, 255.0, THRESH_BINARY)
+        var skel = Mat.zeros(ch1.size(), ch1.type())
+        var temp = Mat(ch1.size(), ch1.type())
+
+        var element = Imgproc.getStructuringElement(MORPH_CROSS, Size(3.0,3.0))
+
+        var done = false
+
+        do {
+            Imgproc.morphologyEx(ch1, temp, MORPH_OPEN, element)
+            Core.bitwise_not(temp, temp)
+            Core.bitwise_and(ch1, temp, temp)
+            Core.bitwise_or(skel, temp, skel)
+            Imgproc.erode(ch1, ch1, element)
+
+            var max: Double? = null
+            max = Core.minMaxLoc(ch1).maxVal
+            done = (max == 0.0)
+        }while (!done)
+
+        var newBitmap = bitmap.copy(bitmap.config,true)
+        Utils.matToBitmap(skel, newBitmap)
+
+        convert_map_img_view.setImageBitmap(newBitmap)
+
+
+        /*System.out.println("run thin")
         var mat = Mat()
 
         System.out.println("run bitmatToMat")
@@ -173,6 +211,6 @@ class ConvertActivity : AppCompatActivity() {
         var newBitmap = bitmap.copy(bitmap.config,true)
         Utils.matToBitmap(thinnedMat, newBitmap)
 
-        convert_map_img_view.setImageBitmap(newBitmap)
+        convert_map_img_view.setImageBitmap(newBitmap)*/
     }
 }
