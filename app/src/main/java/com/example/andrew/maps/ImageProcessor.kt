@@ -10,35 +10,36 @@ import org.opencv.imgproc.Imgproc
 
 class ImageProcessor {
 
-    fun PrepImage(src: Bitmap, hSv_lower:Double, hsV_lower:Double, hsV_upper:Double): Bitmap {
+    //http://bagawerexecinux.cf/1305539/6566619/137c6080a-android-colorrgb-to-hsv-83344
+    fun Segment(src: Bitmap, hSv_lower:Double, hsV_lower:Double, hsV_upper:Double): Bitmap {
 
-        //http://bagawerexecinux.cf/1305539/6566619/137c6080a-android-colorrgb-to-hsv-83344
+        // Initialize Mats
         var mat = Mat()
         var resized = Mat()
-        var cpyMat = Mat()
-        var equCpy = Mat()
+        var hsvMat = Mat()
         var findBlack = Mat()
-        var invMat = Mat()
 
+        // Turn bitmap to Mat
         val bmp32 = src.copy(Bitmap.Config.ARGB_8888, true)
         Utils.bitmapToMat(bmp32, mat)
+
+        // Resize image smaller for thinning accuracy later
         var size = Size(1200.0, 900.0)
         Imgproc.resize(mat, resized, size)
-        Imgproc.cvtColor(resized, cpyMat, Imgproc.COLOR_BGR2HSV, 3) //3 is HSV Channel
 
-        cpyMat.copyTo(findBlack)
-        cpyMat.copyTo(equCpy)
-        cpyMat.copyTo(invMat)
+        //Change color space to has
+        Imgproc.cvtColor(resized, hsvMat, Imgproc.COLOR_BGR2HSV, 3) //3 is HSV Channel
+
+        // Copy hsvMat to findBlack so they are the same size
+        hsvMat.copyTo(findBlack)
 
         // Try get features that we will remove from the image
-        Core.inRange(equCpy, Scalar(0.0, hSv_lower, hsV_lower), Scalar(70.0, 255.0, hsV_upper), findBlack)
+        Core.inRange(hsvMat, Scalar(0.0, hSv_lower, hsV_lower), Scalar(70.0, 255.0, hsV_upper), findBlack)
 
-
-        // Invert segmentation
-        //Core.bitwise_not(findBlack,invMat)
-
+        // Create new bitmap to return
         var newBitmap: Bitmap = Bitmap.createBitmap(findBlack.width(),findBlack.height(), src.config)
-        // Turn mat into bitmap to display in app
+
+        // Turn mat back to bitmap
         Utils.matToBitmap(findBlack, newBitmap)
         return newBitmap!!
     }
@@ -46,8 +47,9 @@ class ImageProcessor {
 
     //Addpted from http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
     fun thin(bitmap: Bitmap): Bitmap{
-        var mat = Mat()
+
         // Convert bitmap to mat
+        var mat = Mat()
         Utils.bitmapToMat(bitmap, mat)
 
         // Split channels of mat as to only use one
@@ -75,10 +77,9 @@ class ImageProcessor {
             Core.bitwise_and(ch1, temp, temp)
             Core.bitwise_or(skel, temp, skel)
             Imgproc.erode(ch1, ch1, element)
-
-            var max: Double? = null
-
+            
             // get max value of mat being thinned
+            var max: Double? = null
             max = Core.minMaxLoc(ch1).maxVal
 
             // if all values are 0 (max will be 0) exit loop
