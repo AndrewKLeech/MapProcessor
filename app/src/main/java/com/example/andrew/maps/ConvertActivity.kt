@@ -1,6 +1,5 @@
 package com.example.andrew.maps
 
-import org.opencv.core.Mat
 import android.os.Bundle
 import android.os.StrictMode
 import android.support.v7.app.AppCompatActivity
@@ -13,15 +12,16 @@ import kotlinx.android.synthetic.main.convert_screen.*
 import android.widget.SeekBar
 import org.opencv.android.OpenCVLoader
 import org.opencv.android.Utils
-import org.opencv.core.Core
-import org.opencv.core.CvType.CV_8UC1
-import org.opencv.core.Scalar
-import org.opencv.core.Size
-import org.opencv.engine.OpenCVEngineInterface
 
 
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.*
+import android.R.attr.src
+import org.opencv.core.*
+import org.opencv.core.Mat
+
+
+
 
 /**
 * Created by Andrew on 28/01/2018.
@@ -161,12 +161,9 @@ class ConvertActivity : AppCompatActivity() {
         return cpy
     }
 
-
     //Addpted from http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
     fun thin(bitmap: Bitmap){
-
         var mat = Mat()
-
         // Convert bitmap to mat
         Utils.bitmapToMat(bitmap, mat)
 
