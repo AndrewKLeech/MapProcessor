@@ -64,7 +64,6 @@ class ConvertActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.convert_screen)
-        setSupportActionBar(toolbar)
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
