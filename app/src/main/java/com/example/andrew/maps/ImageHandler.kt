@@ -11,6 +11,7 @@ import java.util.*
 
 /**
 * Created by Andrew on 12/03/2018.
+ * Used to create new black image files and create copies of existing image files
 */
 class ImageHandler {
     // Create copy of the image so that orignal image can be saved

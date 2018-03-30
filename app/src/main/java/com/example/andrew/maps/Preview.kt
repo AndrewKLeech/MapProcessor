@@ -8,11 +8,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import android.view.View
 import java.io.IOException
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
-import kotlinx.android.synthetic.main.preview.view.*
 
 
 @Suppress("NAME_SHADOWING")
