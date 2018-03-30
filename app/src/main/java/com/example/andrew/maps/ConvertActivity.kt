@@ -16,7 +16,6 @@ import org.opencv.android.Utils
 
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.*
-import android.R.attr.src
 import org.opencv.core.*
 import org.opencv.core.Mat
 
@@ -131,12 +130,9 @@ class ConvertActivity : AppCompatActivity() {
 
     fun PrepImage(src: Bitmap): Bitmap {
 
-        var cpy = src.copy(src.config, true)
-        var pixels = IntArray(cpy.height *cpy.width)
-        cpy.getPixels(pixels, 0, cpy.width, 0, 0, cpy.width, cpy.height)
-
         //http://bagawerexecinux.cf/1305539/6566619/137c6080a-android-colorrgb-to-hsv-83344
         var mat = Mat()
+        var resized = Mat()
         var cpyMat = Mat()
         var equCpy = Mat()
         var findBlack = Mat()
@@ -144,21 +140,25 @@ class ConvertActivity : AppCompatActivity() {
 
         val bmp32 = src.copy(Bitmap.Config.ARGB_8888, true)
         Utils.bitmapToMat(bmp32, mat)
-        Imgproc.cvtColor(mat, cpyMat, Imgproc.COLOR_BGR2HSV, 3) //3 is HSV Channel
+        var size = Size(1200.0, 900.0)
+        Imgproc.resize(mat, resized, size)
+        Imgproc.cvtColor(resized, cpyMat, Imgproc.COLOR_BGR2HSV, 3) //3 is HSV Channel
 
         cpyMat.copyTo(findBlack)
         cpyMat.copyTo(equCpy)
         cpyMat.copyTo(invMat)
 
         // Try get features that we will remove from the image
-        Core.inRange(equCpy, Scalar(0.0, hSv_lower, hsV_lower), Scalar(180.0, 255.0, hsV_upper), findBlack)
+        Core.inRange(equCpy, Scalar(0.0, hSv_lower, hsV_lower), Scalar(70.0, 255.0, hsV_upper), findBlack)
+
 
         // Invert segmentation
         //Core.bitwise_not(findBlack,invMat)
 
+        var newBitmap:Bitmap = Bitmap.createBitmap(findBlack.width(),findBlack.height(), src.config)
         // Turn mat into bitmap to display in app
-        Utils.matToBitmap(findBlack, cpy)
-        return cpy
+        Utils.matToBitmap(findBlack, newBitmap)
+        return newBitmap!!
     }
 
     //Addpted from http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
