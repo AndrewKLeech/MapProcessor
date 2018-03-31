@@ -1,6 +1,7 @@
 package com.example.andrew.maps
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -12,14 +13,23 @@ import kotlinx.android.synthetic.main.content_main.*
 import android.os.StrictMode
 import java.io.*
 import android.hardware.Camera
+import android.net.Uri
+import android.os.Environment
+import android.provider.DocumentsContract.EXTRA_INITIAL_URI
 import android.util.Log
 import android.view.View
+import android.support.v4.app.ActivityCompat.startActivityForResult
+import android.support.v4.app.FragmentActivity
+import java.net.Inet4Address
+import java.net.URI
+
 
 class MainActivity : AppCompatActivity() {
     var mCurrentPhotoPath: String? = null
     var photoFile: File? = null
     var mCamera:Camera? = null
     var mPreview:Preview? = null
+    private val READ_REQUEST_CODE = 42
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
 
@@ -60,6 +70,7 @@ class MainActivity : AppCompatActivity() {
                     fos.write(data)
                     fos.close()
                     capture_img.visibility = View.INVISIBLE
+                    gal_img_btn.visibility = View.INVISIBLE
                     done_img.visibility = View.VISIBLE
                     clear_img.visibility = View.VISIBLE
                 } catch (e: FileNotFoundException) {
@@ -74,6 +85,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Converting image", Toast.LENGTH_SHORT).show()
             // Reset image buttons so if user goes back they are set right
             capture_img.visibility = View.VISIBLE
+            gal_img_btn.visibility = View.VISIBLE
             done_img.visibility = View.INVISIBLE
             clear_img.visibility = View.INVISIBLE
             // Intent for convert activity
@@ -91,9 +103,14 @@ class MainActivity : AppCompatActivity() {
             // Restart the preview
             mCamera!!.startPreview()
             capture_img.visibility = View.VISIBLE
+            gal_img_btn.visibility = View.VISIBLE
             done_img.visibility = View.INVISIBLE
             clear_img.visibility = View.INVISIBLE
         }
+        gal_img_btn.setOnClickListener({
+            performFileSearch()
+        })
+
     }
 
     override fun onResume() {
@@ -109,4 +126,28 @@ class MainActivity : AppCompatActivity() {
             camera_view.addView(mPreview)
         }
     }
+
+    /**
+     * Adapted from https://developer.android.com/guide/topics/providers/document-provider.html
+     * Fires an intent to spin up the "file chooser" UI and select an image.
+     */
+    fun performFileSearch() {
+
+        // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
+        // browser.
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+
+        // Filter to only show results that can be "opened", such as a
+        // file (as opposed to a list of contacts or timezones)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+
+        // Filter to show only images, using the image MIME data type.
+        // If one wanted to search for ogg vorbis files, the type would be "audio/ogg".
+        // To search for all documents available via installed storage providers,
+        // it would be "*/*".
+        intent.type = "image/*"
+
+        startActivityForResult(intent, READ_REQUEST_CODE)
+    }
+
 }
