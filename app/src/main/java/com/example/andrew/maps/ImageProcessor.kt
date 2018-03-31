@@ -34,7 +34,7 @@ class ImageProcessor {
         hsvMat.copyTo(findBlack)
 
         // Try get features that we will remove from the image
-        Core.inRange(hsvMat, Scalar(0.0, hSv_lower, hsV_lower), Scalar(70.0, 255.0, hsV_upper), findBlack)
+        Core.inRange(hsvMat, Scalar(0.0, hSv_lower, hsV_lower), Scalar(180.0, 255.0, hsV_upper), findBlack)
 
         // Create new bitmap to return
         var newBitmap: Bitmap = Bitmap.createBitmap(findBlack.width(),findBlack.height(), src.config)
@@ -77,7 +77,7 @@ class ImageProcessor {
             Core.bitwise_and(ch1, temp, temp)
             Core.bitwise_or(skel, temp, skel)
             Imgproc.erode(ch1, ch1, element)
-            
+
             // get max value of mat being thinned
             var max: Double? = null
             max = Core.minMaxLoc(ch1).maxVal
