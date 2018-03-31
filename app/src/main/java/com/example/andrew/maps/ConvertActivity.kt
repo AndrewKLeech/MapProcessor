@@ -26,37 +26,6 @@ class ConvertActivity : AppCompatActivity() {
     var hsV_upper = 106.0
     var hSv_lower = 0.0
 
-    private fun setPic(path: String) {
-        // Get the dimensions of the View
-        val targetW = convert_map_img_view.width
-        val targetH = convert_map_img_view.height
-
-        // Get the dimensions of the bitmap
-        val bmOptions = BitmapFactory.Options()
-        bmOptions.inJustDecodeBounds = true
-        BitmapFactory.decodeFile(path, bmOptions)
-        val photoW = bmOptions.outWidth
-        val photoH = bmOptions.outHeight
-
-        // Determine how much to scale down the image
-        val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
-
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false
-        bmOptions.inSampleSize = scaleFactor
-        bmOptions.inPurgeable = true
-
-        // Create new mutable bitmap
-        val bitmap = BitmapFactory.decodeFile(path, bmOptions)
-        val bitmap_cpy = bitmap.copy(bitmap.config, true)
-
-        // Segment image
-        bitmapconv =  ImageProcessor().Segment(bitmap_cpy, hSv_lower, hsV_lower, hsV_upper)
-
-        // Show bitmap
-        convert_map_img_view.setImageBitmap(bitmapconv)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         // Try load OpenCV
@@ -67,7 +36,7 @@ class ConvertActivity : AppCompatActivity() {
         // Get photo paths sent with intent
         val intent = intent
         mSrcPhotoPath = intent.getStringExtra("src")
-        mCurrentPhotoPath = intent.getStringExtra("img")
+        mCurrentPhotoPath = mSrcPhotoPath
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.convert_screen)
@@ -127,5 +96,37 @@ class ConvertActivity : AppCompatActivity() {
         if (hasFocus) {
             setPic(mCurrentPhotoPath!!)
         }
+    }
+
+    private fun setPic(path: String) {
+        // Get the dimensions of the View
+        val targetW = convert_map_img_view.width
+        val targetH = convert_map_img_view.height
+
+        // Get the dimensions of the bitmap
+        val bmOptions = BitmapFactory.Options()
+        bmOptions.inJustDecodeBounds = true
+        BitmapFactory.decodeFile(path, bmOptions)
+        val photoW = bmOptions.outWidth
+        val photoH = bmOptions.outHeight
+
+        // Determine how much to scale down the image
+        val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false
+        bmOptions.inSampleSize = scaleFactor
+        bmOptions.inPurgeable = true
+
+        // Create new mutable bitmap
+        System.out.println(path)
+        val bitmap = BitmapFactory.decodeFile(path, bmOptions)
+        val bitmap_cpy = bitmap.copy(bitmap.config, true)
+
+        // Segment image
+        bitmapconv =  ImageProcessor().Segment(bitmap_cpy, hSv_lower, hsV_lower, hsV_upper)
+
+        // Show bitmap
+        convert_map_img_view.setImageBitmap(bitmapconv)
     }
 }
