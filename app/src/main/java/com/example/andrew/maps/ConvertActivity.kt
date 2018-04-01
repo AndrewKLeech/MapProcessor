@@ -5,10 +5,17 @@ import android.os.StrictMode
 import android.support.v7.app.AppCompatActivity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.opengl.Matrix
 import android.util.Log
 import kotlinx.android.synthetic.main.convert_screen.*
 import android.widget.SeekBar
 import org.opencv.android.OpenCVLoader
+import org.opencv.core.Core
+import org.opencv.core.Mat
+import android.opengl.ETC1.getHeight
+import android.opengl.ETC1.getWidth
+
+
 
 /**
 * Created by Andrew on 28/01/2018.
@@ -105,13 +112,13 @@ class ConvertActivity : AppCompatActivity() {
 
         // Get the dimensions of the bitmap
         val bmOptions = BitmapFactory.Options()
-        bmOptions.inJustDecodeBounds = true
+        //bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, bmOptions)
-        val photoW = bmOptions.outWidth
-        val photoH = bmOptions.outHeight
+        //val photoW = bmOptions.outWidth
+        //val photoH = bmOptions.outHeight
 
         // Determine how much to scale down the image
-        val scaleFactor = Math.min(photoW / targetW, photoH / targetH)
+        val scaleFactor = Math.min(1, 1)
 
         // Decode the image file into a Bitmap sized to fill the View
         bmOptions.inJustDecodeBounds = false
@@ -119,7 +126,6 @@ class ConvertActivity : AppCompatActivity() {
         bmOptions.inPurgeable = true
 
         // Create new mutable bitmap
-        System.out.println(path)
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
         val bitmap_cpy = bitmap.copy(bitmap.config, true)
 

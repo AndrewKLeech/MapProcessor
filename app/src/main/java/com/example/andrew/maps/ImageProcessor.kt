@@ -2,10 +2,7 @@ package com.example.andrew.maps
 
 import android.graphics.Bitmap
 import org.opencv.android.Utils
-import org.opencv.core.Core
-import org.opencv.core.Mat
-import org.opencv.core.Scalar
-import org.opencv.core.Size
+import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
 
 class ImageProcessor {
@@ -43,7 +40,6 @@ class ImageProcessor {
         Utils.matToBitmap(findBlack, newBitmap)
         return newBitmap!!
     }
-
 
     //Addpted from http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
     fun thin(bitmap: Bitmap): Bitmap{
