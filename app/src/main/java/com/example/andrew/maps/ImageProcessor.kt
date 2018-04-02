@@ -3,8 +3,10 @@ package com.example.andrew.maps
 import android.graphics.Bitmap
 import org.opencv.android.Utils
 import org.opencv.core.*
+import org.opencv.core.CvType.CV_64FC1
+import org.opencv.core.CvType.CV_64FC3
 import org.opencv.imgproc.Imgproc
-import org.opencv.imgproc.Imgproc.Canny
+import org.opencv.imgproc.Imgproc.*
 
 class ImageProcessor {
 
@@ -95,8 +97,9 @@ class ImageProcessor {
 
     fun thin2(bitmap: Bitmap): Bitmap{
 
+        var hierarchy = Mat()
         var mat = Mat()
-        var outMat = Mat()
+
 
         Utils.bitmapToMat(bitmap, mat)
 
@@ -108,7 +111,16 @@ class ImageProcessor {
         // Detect edges
         Canny(ch1,ch1,127.0, 255.0)
 
-        ch1.copyTo(outMat)
+        var contours = arrayListOf(MatOfPoint())
+        findContours(ch1, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
+
+        var drawing = Mat.zeros(mat.size(), mat.type())
+
+        for (i in 1 until contours.size){
+            drawContours(drawing,contours,i, Scalar(255.0,255.0,255.0), -2, 8, hierarchy, 0, Point())
+        }
+        var outMat = Mat(mat.size(), mat.type())
+        drawing.copyTo(outMat)
         // Create new bitmap to hold values of skeleton mat
         var newBitmap = bitmap.copy(bitmap.config,true)
 

@@ -94,8 +94,8 @@ class ConvertActivity : AppCompatActivity() {
         done_seg_img_btn.setOnClickListener({
 
             // Set view as bitmap returned from thin function im ImageProcessor
-            //convert_map_img_view.setImageBitmap(ImageProcessor().thin(bitmapconv!!))
-            convert_map_img_view.setImageBitmap(ImageProcessor().thin2(bitmapconv!!))
+            convert_map_img_view.setImageBitmap(ImageProcessor().thin(bitmapconv!!))
+            convert_map_img_view.setImageBitmap(ImageProcessor().thin2(ImageProcessor().thin(bitmapconv!!)))
         })
     }
 
