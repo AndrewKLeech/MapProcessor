@@ -17,6 +17,13 @@ import android.view.View
 
 
 class MainActivity : AppCompatActivity() {
+    external fun stringFromJNI(): String
+
+    companion object {
+        init{
+            System.loadLibrary("native-lib")
+        }
+    }
     var mCurrentPhotoPath: String? = null
     var photoFile: File? = null
     var mCamera:Camera? = null
@@ -24,13 +31,14 @@ class MainActivity : AppCompatActivity() {
     private val READ_REQUEST_CODE = 42
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
+
+        System.out.println(stringFromJNI())
 
         // Try load camera
         try{
@@ -178,5 +186,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
 }

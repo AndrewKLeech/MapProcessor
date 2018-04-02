@@ -104,28 +104,35 @@ class ImageProcessor {
         Utils.bitmapToMat(bitmap, mat)
 
         // Split channels of mat as to only use one
-        var channels = List<Mat>(mat.channels(), {Mat()})
+        var channels = List(mat.channels(), {Mat()})
         Core.split(mat, channels)
+        System.out.println("No Of Channels: " + channels.size)
         var ch1 = channels[0]
 
         // Detect edges
         Canny(ch1,ch1,127.0, 255.0)
+        System.out.println("Canny complete")
 
         var contours = arrayListOf(MatOfPoint())
-        findContours(ch1, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE)
+        // RETR_TREE finds all contours
+        findContours(ch1, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE)
+        System.out.println("findContours complete")
 
-        var drawing = Mat.zeros(mat.size(), mat.type())
+        var drawing = Mat(mat.size(), mat.type(), Scalar(0.0,0.0,0.0, 255.0))
 
         for (i in 1 until contours.size){
-            drawContours(drawing,contours,i, Scalar(255.0,255.0,255.0), -2, 8, hierarchy, 0, Point())
+            drawContours(drawing,contours,i, Scalar(255.0,255.0,255.0, 255.0), 0, 8, hierarchy, 0, Point())
         }
-        var outMat = Mat(mat.size(), mat.type())
-        drawing.copyTo(outMat)
+
+
         // Create new bitmap to hold values of skeleton mat
         var newBitmap = bitmap.copy(bitmap.config,true)
 
+
+        var outMat = Mat(mat.size(), mat.type(), Scalar(0.0,0.0,0.0, 255.0))
+        //Core.bitwise_or(outMat,drawing,outMat)
         // Turn skeletion mat to bitmap
-        Utils.matToBitmap(outMat, newBitmap)
+        Utils.matToBitmap(drawing, newBitmap)
 
         // return thinned bitmap
         return newBitmap

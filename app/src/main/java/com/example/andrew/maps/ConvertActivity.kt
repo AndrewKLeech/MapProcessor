@@ -94,8 +94,13 @@ class ConvertActivity : AppCompatActivity() {
         done_seg_img_btn.setOnClickListener({
 
             // Set view as bitmap returned from thin function im ImageProcessor
+
+            /* two approaches to thinning:
+            thin: use a morphological thinning operation
+            thin2: use canny edge detection then get contours
+             */
             convert_map_img_view.setImageBitmap(ImageProcessor().thin(bitmapconv!!))
-            convert_map_img_view.setImageBitmap(ImageProcessor().thin2(ImageProcessor().thin(bitmapconv!!)))
+            //convert_map_img_view.setImageBitmap(ImageProcessor().thin2(ImageProcessor().thin(bitmapconv!!)))
         })
     }
 
