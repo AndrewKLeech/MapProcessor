@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import org.opencv.android.Utils
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
+import org.opencv.imgproc.Imgproc.Canny
 
 class ImageProcessor {
 
@@ -87,6 +88,32 @@ class ImageProcessor {
 
         // Turn skeletion mat to bitmap
         Utils.matToBitmap(skel, newBitmap)
+
+        // return thinned bitmap
+        return newBitmap
+    }
+
+    fun thin2(bitmap: Bitmap): Bitmap{
+
+        var mat = Mat()
+        var outMat = Mat()
+
+        Utils.bitmapToMat(bitmap, mat)
+
+        // Split channels of mat as to only use one
+        var channels = List<Mat>(mat.channels(), {Mat()})
+        Core.split(mat, channels)
+        var ch1 = channels[0]
+
+        // Detect edges
+        Canny(ch1,ch1,127.0, 255.0)
+
+        ch1.copyTo(outMat)
+        // Create new bitmap to hold values of skeleton mat
+        var newBitmap = bitmap.copy(bitmap.config,true)
+
+        // Turn skeletion mat to bitmap
+        Utils.matToBitmap(outMat, newBitmap)
 
         // return thinned bitmap
         return newBitmap
