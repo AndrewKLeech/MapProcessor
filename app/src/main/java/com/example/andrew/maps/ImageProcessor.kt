@@ -3,8 +3,6 @@ package com.example.andrew.maps
 import android.graphics.Bitmap
 import org.opencv.android.Utils
 import org.opencv.core.*
-import org.opencv.core.CvType.CV_64FC1
-import org.opencv.core.CvType.CV_64FC3
 import org.opencv.imgproc.Imgproc
 import org.opencv.imgproc.Imgproc.*
 
@@ -41,7 +39,7 @@ class ImageProcessor {
 
         // Turn mat back to bitmap
         Utils.matToBitmap(findBlack, newBitmap)
-        return newBitmap!!
+        return newBitmap
     }
 
     //Addpted from http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
@@ -74,9 +72,9 @@ class ImageProcessor {
                  | 0 | 1 | 0 |
                  |___|___|___|
          */
-        var element = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, Size(3.0,3.0))
+        val element = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, Size(3.0,3.0))
 
-        // Start false
+        // Start as not done (false)
         var done: Boolean
 
         // Do thinning
@@ -88,7 +86,7 @@ class ImageProcessor {
             Imgproc.erode(ch1, ch1, element)
 
             // get max value of mat being thinned
-            var max: Double? = null
+            var max: Double?
             max = Core.minMaxLoc(ch1).maxVal
 
             // if all values are 0 (max will be 0) exit loop
