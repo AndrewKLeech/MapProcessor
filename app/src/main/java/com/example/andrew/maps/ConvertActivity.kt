@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import android.view.View
 import kotlinx.android.synthetic.main.convert_screen.*
 import android.widget.SeekBar
 import org.opencv.android.OpenCVLoader
@@ -94,7 +95,23 @@ class ConvertActivity : AppCompatActivity() {
              */
             convert_map_img_view.setImageBitmap(ImageProcessor().thin(bitmapconv!!))
             //convert_map_img_view.setImageBitmap(ImageProcessor().thin2(ImageProcessor().thin(bitmapconv!!)))
+
+            hsV_Max_txt.visibility = View.INVISIBLE
+            hsV_Min_txt.visibility = View.INVISIBLE
+            valUpperSeekBar.visibility = View.INVISIBLE
+            valLowerSeekBar.visibility = View.INVISIBLE
+            cancel_img_btn.visibility = View.VISIBLE
         })
+
+        // Listener for cancel button
+        cancel_img_btn.setOnClickListener {
+            hsV_Max_txt.visibility = View.VISIBLE
+            hsV_Min_txt.visibility = View.VISIBLE
+            valUpperSeekBar.visibility = View.VISIBLE
+            valLowerSeekBar.visibility = View.VISIBLE
+            cancel_img_btn.visibility = View.INVISIBLE
+
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

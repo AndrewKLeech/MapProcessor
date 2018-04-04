@@ -25,13 +25,13 @@
         app:srcCompat="@android:color/transparent" />
 
     <TextView
-        android:id="@+id/value_textbox"
+        android:id="@+id/hsV_Min_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/value_lower_txt"
         android:textSize="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
+        app:layout_constraintBottom_toBottomOf="@+id/hsV_Max_txt"
         app:layout_constraintEnd_toStartOf="@+id/valLowerSeekBar" />
 
     <SeekBar
@@ -58,7 +58,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/hsV_Max_txt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -76,6 +76,18 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_done_black_24dp" />
+
+    <ImageView
+        android:id="@+id/cancel_img_btn"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/convert_map_img_view"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_clear_black_24dp" />
 
 
 </android.support.constraint.ConstraintLayout>
