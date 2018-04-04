@@ -59,6 +59,10 @@ class MyGLRenderer : GLSurfaceView.Renderer {
         return shader
     }
 
+    fun trackball(va: FloatArray, vb: FloatArray){
+
+
+    }
     override fun onDrawFrame(unused: GL10) {
         // for rotation
         var scratch: FloatArray =  FloatArray(16)
