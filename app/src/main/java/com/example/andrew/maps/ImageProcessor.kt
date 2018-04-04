@@ -64,7 +64,16 @@ class ImageProcessor {
         var temp = Mat(ch1.size(), ch1.type())
 
 
-        // structured element (kernal)
+        // structured element (kernel)
+        /*
+                  ___ ___ ___
+                 | 0 | 1 | 0 |
+                 |___|___|___|
+                 | 1 | 1 | 1 |
+                 |___|___|___|
+                 | 0 | 1 | 0 |
+                 |___|___|___|
+         */
         var element = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, Size(3.0,3.0))
 
         var done = false

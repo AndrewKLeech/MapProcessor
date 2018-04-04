@@ -5,17 +5,10 @@ import android.os.StrictMode
 import android.support.v7.app.AppCompatActivity
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.opengl.Matrix
 import android.util.Log
 import kotlinx.android.synthetic.main.convert_screen.*
 import android.widget.SeekBar
 import org.opencv.android.OpenCVLoader
-import org.opencv.core.Core
-import org.opencv.core.Mat
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
-
-
 
 /**
 * Created by Andrew on 28/01/2018.
