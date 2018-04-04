@@ -1,5 +1,6 @@
 package com.example.andrew.maps
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.StrictMode
 import android.support.v7.app.AppCompatActivity
@@ -39,6 +40,9 @@ class ConvertActivity : AppCompatActivity() {
         if (!OpenCVLoader.initDebug()) {
             Log.d("E", "OpenCV initialization error" + hsV_lower.toString())
         }
+
+        // used to check if user is done this step
+        var doneConvert = false
 
         // Get photo paths sent with intent
         val intent = intent
@@ -119,6 +123,18 @@ class ConvertActivity : AppCompatActivity() {
             valUpperSeekBar.visibility = View.INVISIBLE
             valLowerSeekBar.visibility = View.INVISIBLE
             cancel_img_btn.visibility = View.VISIBLE
+
+            if(doneConvert){
+                // Intent for convert activity
+                val displayModelIntent = Intent(this, DisplayModel::class.java)
+
+
+                // Start convert intent
+                this.startActivity(displayModelIntent)
+            }
+            // Set doneConvert to true so when the done button is hit
+            // a second time in a row the next intent is launched
+            doneConvert = true
         })
 
         // Listener for cancel button
@@ -130,6 +146,10 @@ class ConvertActivity : AppCompatActivity() {
             valUpperSeekBar.visibility = View.VISIBLE
             valLowerSeekBar.visibility = View.VISIBLE
             cancel_img_btn.visibility = View.INVISIBLE
+
+            // Set doneConvert to false to make sure next intent is
+            // Only launched when done button is hit twice in a row
+            doneConvert = false
 
             // Redisplay original segmented image before thinning occurred
             setPic(mCurrentPhotoPath!!)
