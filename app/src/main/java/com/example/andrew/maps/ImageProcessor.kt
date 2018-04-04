@@ -76,7 +76,8 @@ class ImageProcessor {
          */
         var element = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, Size(3.0,3.0))
 
-        var done = false
+        // Start false
+        var done: Boolean
 
         // Do thinning
         do {
