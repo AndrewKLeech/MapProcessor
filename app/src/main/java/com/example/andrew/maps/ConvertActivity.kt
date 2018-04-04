@@ -18,8 +18,10 @@ import org.opencv.android.OpenCVLoader
 class ConvertActivity : AppCompatActivity() {
 
     // FOR DEBUGGING
+    // Save segmented image to file
+    val SAVE_SEGMENTED_IMAGE = false
     // Save thinned image to file
-    val SAVE_THINNED_IMAGE = true
+    val SAVE_THINNED_IMAGE = false
 
     // Paths for photo files
     private var mSrcPhotoPath: String? = null
@@ -98,10 +100,15 @@ class ConvertActivity : AppCompatActivity() {
             thin2: use canny edge detection then get contours
              */
 
+            if(SAVE_SEGMENTED_IMAGE){
+                ImageHandler().saveImage(bitmapconv!!, "segmented", this)
+            }
             var thinnedBitmap = ImageProcessor().thin(bitmapconv!!)
             convert_map_img_view.setImageBitmap(thinnedBitmap)
+
             //convert_map_img_view.setImageBitmap(ImageProcessor().thin2(ImageProcessor().thin(bitmapconv!!)))
-            
+
+            // Save file of thinned image
             if(SAVE_THINNED_IMAGE){
                 ImageHandler().saveImage(thinnedBitmap, "thinned", this)
             }
