@@ -17,6 +17,10 @@ import org.opencv.android.OpenCVLoader
 
 class ConvertActivity : AppCompatActivity() {
 
+    // FOR DEBUGGING
+    // Save thinned image to file
+    val SAVE_THINNED_IMAGE = true
+
     // Paths for photo files
     private var mSrcPhotoPath: String? = null
     var mCurrentPhotoPath: String? = null
@@ -93,8 +97,14 @@ class ConvertActivity : AppCompatActivity() {
             thin: use a morphological thinning operation
             thin2: use canny edge detection then get contours
              */
-            convert_map_img_view.setImageBitmap(ImageProcessor().thin(bitmapconv!!))
+
+            var thinnedBitmap = ImageProcessor().thin(bitmapconv!!)
+            convert_map_img_view.setImageBitmap(thinnedBitmap)
             //convert_map_img_view.setImageBitmap(ImageProcessor().thin2(ImageProcessor().thin(bitmapconv!!)))
+            
+            if(SAVE_THINNED_IMAGE){
+                ImageHandler().saveImage(thinnedBitmap, "thinned", this)
+            }
 
             // Change visibility of UI options
             hsV_Max_txt.visibility = View.INVISIBLE
@@ -106,6 +116,7 @@ class ConvertActivity : AppCompatActivity() {
 
         // Listener for cancel button
         cancel_img_btn.setOnClickListener {
+
             // Change visibility of UI options
             hsV_Max_txt.visibility = View.VISIBLE
             hsV_Min_txt.visibility = View.VISIBLE

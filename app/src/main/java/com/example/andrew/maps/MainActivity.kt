@@ -88,9 +88,8 @@ class MainActivity : AppCompatActivity() {
 
         // Try create new blank .jpg file
         try {
-            photoFile = ImageHandler().createImageFile(this)
+            photoFile = ImageHandler().createImageFile(this, "JPG")
             mCurrentPhotoPath = photoFile!!.absolutePath
-            System.out.println("Photopath: "+ mCurrentPhotoPath)
         } catch (e: IOException) {
             Log.d("ERROR", "Could not create file " + e.message)
         }
@@ -180,7 +179,6 @@ class MainActivity : AppCompatActivity() {
                 uri = resultData.data
                 var imageUri = Environment.getExternalStorageDirectory().absolutePath+ uri.path.replace("document/primary:", "")
                 mCurrentPhotoPath = imageUri
-                System.out.println(imageUri)
                 imageSelected(false)
 
             }
