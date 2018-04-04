@@ -96,6 +96,7 @@ class ConvertActivity : AppCompatActivity() {
             convert_map_img_view.setImageBitmap(ImageProcessor().thin(bitmapconv!!))
             //convert_map_img_view.setImageBitmap(ImageProcessor().thin2(ImageProcessor().thin(bitmapconv!!)))
 
+            // Change visibility of UI options
             hsV_Max_txt.visibility = View.INVISIBLE
             hsV_Min_txt.visibility = View.INVISIBLE
             valUpperSeekBar.visibility = View.INVISIBLE
@@ -105,12 +106,15 @@ class ConvertActivity : AppCompatActivity() {
 
         // Listener for cancel button
         cancel_img_btn.setOnClickListener {
+            // Change visibility of UI options
             hsV_Max_txt.visibility = View.VISIBLE
             hsV_Min_txt.visibility = View.VISIBLE
             valUpperSeekBar.visibility = View.VISIBLE
             valLowerSeekBar.visibility = View.VISIBLE
             cancel_img_btn.visibility = View.INVISIBLE
 
+            // Redisplay original segmented image before thinning occurred
+            setPic(mCurrentPhotoPath!!)
         }
     }
 
