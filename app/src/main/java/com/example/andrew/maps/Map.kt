@@ -18,11 +18,6 @@ class Map {
                     "  gl_Position = uMVPMatrix * vPosition;" +
                     "}"
 
-
-    // Use to access and set the view transformation
-    private var mMVPMatrixHandle:Int = 0
-
-
     private val fragmentShaderCode =
             "precision mediump float;" +
                     "uniform vec4 vColor;" +
@@ -30,6 +25,8 @@ class Map {
                     "  gl_FragColor = vColor;" +
                     "}"
 
+    // Use to access and set the view transformation
+    private var mMVPMatrixHandle:Int = 0
 
     private var mProgram: Int = 0
 

@@ -8,8 +8,12 @@ import org.opencv.imgproc.Imgproc.*
 
 class ImageProcessor {
 
-    //http://bagawerexecinux.cf/1305539/6566619/137c6080a-android-colorrgb-to-hsv-83344
-    fun Segment(src: Bitmap, hSv_lower:Double, hsV_lower:Double, hsV_upper:Double): Bitmap {
+    /*
+    * segment() segments a bitmap by color using arguments passed to set the color range
+    * in which to segment the bitmap.
+    * segment() returns a black and white Bitmap.
+    */
+    fun segment(src: Bitmap, hSv_lower:Double, hsV_lower:Double, hsV_upper:Double): Bitmap {
 
         // Initialize Mats
         var mat = Mat()
@@ -42,7 +46,11 @@ class ImageProcessor {
         return newBitmap
     }
 
-    //Addpted from http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
+    /*
+        thin() takes a Bitmap as an argument and performs iterations of a morphological
+        thinning operation to return a skeleton of the original Bitmap.
+        Adapted from http://felix.abecassis.me/2011/09/opencv-morphological-skeleton/
+    */
     fun thin(bitmap: Bitmap): Bitmap{
 
         // Convert bitmap to mat
@@ -50,7 +58,7 @@ class ImageProcessor {
         Utils.bitmapToMat(bitmap, mat)
 
         // Split channels of mat as to only use one
-        var channels = List<Mat>(mat.channels(), {Mat()})
+        var channels = List(mat.channels(), {Mat()})
         Core.split(mat, channels)
         var ch1 = channels[0]
 
@@ -79,6 +87,7 @@ class ImageProcessor {
 
         // Do thinning
         do {
+            // MORPH_OPEN = erode -> dilate
             Imgproc.morphologyEx(ch1, temp, Imgproc.MORPH_OPEN, element)
             Core.bitwise_not(temp, temp)
             Core.bitwise_and(ch1, temp, temp)
@@ -91,6 +100,7 @@ class ImageProcessor {
 
             // if all values are 0 (max will be 0) exit loop
             done = (max == 0.0)
+
         }while (!done)
 
         // Create new bitmap to hold values of skeleton mat

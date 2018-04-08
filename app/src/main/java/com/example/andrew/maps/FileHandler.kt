@@ -15,7 +15,7 @@ import java.util.*
 * Created by Andrew on 12/03/2018.
  * Used to create new black image files and create copies of existing image files
 */
-class ImageHandler {
+class FileHandler {
     // Create copy of the image so that orignal image can be saved
     fun createImageCopy(srcImg: File, ctx: Context): String? {
         val storageDir = ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
@@ -61,19 +61,23 @@ class ImageHandler {
     // The name if the file will be JPEG_yyyyMMdd_HHmmSS_.jpg
     fun createImageFile(ctx: Context, fileHead: String): File {
         val storageDir = ctx.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
         // Create an image file name
         val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val imageFileName = fileHead + "_" + timeStamp + "_"
+
         // Create empty file
         val image = File.createTempFile(
                 imageFileName, /* prefix */
-                ".jpg", /* suffix */
-                storageDir      /* directory */
+                ".jpg",  /* suffix */
+                storageDir     /* directory */
         )
+
         // Save a file: path for use with ACTION_VIEW intents
         return image
     }
 
+    // Save bitmap to file
     fun saveImage(bitmap: Bitmap, fileHead: String, ctx: Context){
 
         var out: FileOutputStream? = null

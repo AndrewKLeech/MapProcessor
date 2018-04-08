@@ -31,7 +31,8 @@ class Preview(context: Context, camera:Camera) : SurfaceView(context), SurfaceHo
         mHolder!!.addCallback(this)
         mHolder!!.setType(SurfaceHolder.SURFACE_TYPE_NORMAL)
     }
-    // help from https://stackoverflow.com/questions/18460647/android-setfocusarea-and-auto-focus
+    // Make camera focus on thouch
+    // build with help from from https://stackoverflow.com/questions/18460647/android-setfocusarea-and-auto-focus
     override fun onTouchEvent(motionEvent: MotionEvent): Boolean {
         if (mCamera != null) {
             mCamera!!.cancelAutoFocus()

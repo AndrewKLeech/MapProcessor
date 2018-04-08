@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 
         // Try create new blank .jpg file
         try {
-            photoFile = ImageHandler().createImageFile(this, "JPG")
+            photoFile = FileHandler().createImageFile(this, "JPG")
             mCurrentPhotoPath = photoFile!!.absolutePath
         } catch (e: IOException) {
             Log.d("ERROR", "Could not create file " + e.message)
@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
         // Create copy of image taken and get the path
         if(copy) {
-            val cpy_img_path = ImageHandler().createImageCopy(photoFile!!, this)
+            val cpy_img_path = FileHandler().createImageCopy(photoFile!!, this)
             // Send copy image path as extra in intent
             convertIntent.putExtra("img", cpy_img_path)
         }

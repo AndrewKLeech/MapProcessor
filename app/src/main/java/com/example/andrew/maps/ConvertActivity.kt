@@ -105,7 +105,7 @@ class ConvertActivity : AppCompatActivity() {
              */
 
             if(SAVE_SEGMENTED_IMAGE){
-                ImageHandler().saveImage(bitmapconv!!, "segmented", this)
+                FileHandler().saveImage(bitmapconv!!, "segmented", this)
             }
             var thinnedBitmap = ImageProcessor().thin(bitmapconv!!)
             convert_map_img_view.setImageBitmap(thinnedBitmap)
@@ -114,7 +114,7 @@ class ConvertActivity : AppCompatActivity() {
 
             // Save file of thinned image
             if(SAVE_THINNED_IMAGE){
-                ImageHandler().saveImage(thinnedBitmap, "thinned", this)
+                FileHandler().saveImage(thinnedBitmap, "thinned", this)
             }
 
             // Change visibility of UI options
@@ -187,8 +187,8 @@ class ConvertActivity : AppCompatActivity() {
         val bitmap = BitmapFactory.decodeFile(path, bmOptions)
         val bitmap_cpy = bitmap.copy(bitmap.config, true)
 
-        // Segment image
-        bitmapconv =  ImageProcessor().Segment(bitmap_cpy, hSv_lower, hsV_lower, hsV_upper)
+        // segment image
+        bitmapconv =  ImageProcessor().segment(bitmap_cpy, hSv_lower, hsV_lower, hsV_upper)
 
         // Show bitmap
         convert_map_img_view.setImageBitmap(bitmapconv)

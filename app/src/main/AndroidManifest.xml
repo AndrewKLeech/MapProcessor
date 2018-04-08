@@ -2,10 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.andrew.maps">
 
+    <!-- Get permission for camera-->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" />
-    <uses-feature android:name="android.hardware.camera2" />
+
+    <!-- User auto-focus feature for camera-->
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <!-- Get read and write permission -->
     <uses-feature android:name="android.permission.WRITE_EXTERNAL_STORAGE"  android:maxSdkVersion="18"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
