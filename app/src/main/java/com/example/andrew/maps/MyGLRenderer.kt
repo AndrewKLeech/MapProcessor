@@ -16,6 +16,7 @@ import android.os.SystemClock
 class MyGLRenderer : GLSurfaceView.Renderer {
 
     private var mMap: Map? = null
+    private var mWire: Map? = null
 
     // mMVPMatrix is an abbreviation for "Model View Projection Matrix"
     private val mMVPMatrix = FloatArray(16)
@@ -43,6 +44,8 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         // initialize a triangle
         mMap = Map()
+        mWire = mMap
+        mWire!!.wireframe = true
     }
 
     fun loadShader(type: Int, shaderCode: String): Int {
@@ -85,6 +88,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         // Draw triangle
         mMap!!.draw(scratch)
+        mWire!!.draw(scratch)
     }
 
     override fun onSurfaceChanged(unused: GL10, width: Int, height: Int) {

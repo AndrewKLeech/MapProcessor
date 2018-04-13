@@ -42,11 +42,15 @@ class Map {
     // Set color with red, green, blue and alpha (opacity) values
     internal var color = floatArrayOf(0.63671875f, 0.76953125f, 0.22265625f, 5.0f)
 
+    internal var white = floatArrayOf(1.0f, 1.0f, 1.0f, 5.0f)
+
     //private val vertexCount = triangleCoords.size / COORDS_PER_VERTEX
 
     // Stride for reading through buffers (number of coordinate values multiplied
     // by the size of the data type
     private val vertexStride = COORDS_PER_VERTEX * FLOAT_SIZE // 4 bytes per vertex
+
+    var wireframe = false
 
     // For testing
     val useGenExample = false
@@ -192,10 +196,17 @@ class Map {
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, vbo[0])
 
+        GLES20.glDepthMask(true)
+
         // Draw
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, ibo[0]);
         GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, indices.size, GLES20.GL_UNSIGNED_SHORT, 0)
 
+        if(wireframe) {
+            // Set color for drawing the triangle
+            GLES20.glUniform4fv(mColorHandle, 1, white, 0)
+            GLES20.glDrawElements(GLES20.GL_LINE_STRIP, indices.size, GLES20.GL_UNSIGNED_SHORT, 0)
+        }
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0)
 
