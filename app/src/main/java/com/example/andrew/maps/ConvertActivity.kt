@@ -20,9 +20,11 @@ class ConvertActivity : AppCompatActivity() {
 
     // FOR DEBUGGING
     // Save segmented image to file
-    val SAVE_SEGMENTED_IMAGE = false
+    private val SAVE_SEGMENTED_IMAGE = false
     // Save thinned image to file
-    val SAVE_THINNED_IMAGE = false
+    private val SAVE_THINNED_IMAGE = false
+    // Show extra range sliders for Hue and Saturation
+    private val DEBUG_SLIDERS = false
 
     // Paths for photo files
     private var mSrcPhotoPath: String? = null
@@ -31,15 +33,15 @@ class ConvertActivity : AppCompatActivity() {
     // Bitmap of segmented image
     var bitmapconv: Bitmap? = null
 
-    // H
+    // Hue
     var Hsv_lower = 76.0
     var Hsv_upper = 120.0
 
-    // S
+    // Saturation
     var hSv_lower = 15.0
     var hSv_upper = 255.0
 
-    // V
+    // Value
     var hsV_lower = 90.0
     var hsV_upper = 152.0
 
@@ -63,26 +65,31 @@ class ConvertActivity : AppCompatActivity() {
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
+        // Make hue and saturation slide bars visible
+        if(DEBUG_SLIDERS){
+            hue_min.visibility = View.VISIBLE
+            hue_max.visibility = View.VISIBLE
+            sat_min.visibility = View.VISIBLE
+            sat_max.visibility = View.VISIBLE
+        }
 
-        // Set starting progress of Value min bar to hsV_lower
+        // Set starting progress of Value min bar to hsV_lower (not visible if DEBUG_SLIDERS is false)
         hue_min.progress = Hsv_lower.toInt()
 
-        // Set starting progress of Value max bar to hsV_upper
+        // Set starting progress of Value max bar to hsV_upper (not visible if DEBUG_SLIDERS is false)
         hue_max.progress = Hsv_upper.toInt()
 
-        // Set starting progress of Value min bar to hsV_lower
-        satmin.progress = hSv_lower.toInt()
+        // Set starting progress of Value min bar to hsV_lower (not visible if DEBUG_SLIDERS is false)
+        sat_min.progress = hSv_lower.toInt()
 
-        // Set starting progress of Value max bar to hsV_upper
-        satmax.progress = hSv_upper.toInt()
+        // Set starting progress of Value max bar to hsV_upper (not visible if DEBUG_SLIDERS is false)
+        sat_max.progress = hSv_upper.toInt()
 
         // Set starting progress of Value min bar to hsV_lower
         valLowerSeekBar.progress = hsV_lower.toInt()
 
         // Set starting progress of Value max bar to hsV_upper
         valUpperSeekBar.progress = hsV_upper.toInt()
-
-
 
         // Listener for valLowerSeekBar
         valLowerSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -118,7 +125,7 @@ class ConvertActivity : AppCompatActivity() {
             }
         })
 
-        // Listener for hue min
+        // Listener for hue min (not visible if DEBUG_SLIDERS is false)
         hue_min.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mCurrentPhotoPath = mSrcPhotoPath
@@ -135,7 +142,7 @@ class ConvertActivity : AppCompatActivity() {
             }
         })
 
-        // Listener for hue min
+        // Listener for hue min (not visible if DEBUG_SLIDERS is false)
         hue_max.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mCurrentPhotoPath = mSrcPhotoPath
@@ -152,11 +159,11 @@ class ConvertActivity : AppCompatActivity() {
             }
         })
 
-        // Listener for sat min
-        satmin.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        // Listener for sat min (not visible if DEBUG_SLIDERS is false)
+        sat_min.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mCurrentPhotoPath = mSrcPhotoPath
-                hSv_lower = satmin.progress.toDouble()
+                hSv_lower = sat_min.progress.toDouble()
                 setPic(mCurrentPhotoPath!!)
                 Log.d("I", "hSv_lower is: " + hSv_lower.toString())
             }
@@ -169,11 +176,11 @@ class ConvertActivity : AppCompatActivity() {
             }
         })
 
-        // Listener for sat max
-        satmax.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        // Listener for sat max (not visible if DEBUG_SLIDERS is false)
+        sat_max.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onStopTrackingTouch(seekBar: SeekBar) {
                 mCurrentPhotoPath = mSrcPhotoPath
-                hSv_upper = satmax.progress.toDouble()
+                hSv_upper = sat_max.progress.toDouble()
                 setPic(mCurrentPhotoPath!!)
                 Log.d("I", "hSv_upper is: " + hSv_upper.toString())
             }
@@ -196,12 +203,16 @@ class ConvertActivity : AppCompatActivity() {
             thin2: use canny edge detection then get contours
              */
 
+            // Save file of segmented image
             if(SAVE_SEGMENTED_IMAGE){
                 FileHandler().saveImage(bitmapconv!!, "segmented", this)
             }
-            var thinnedBitmap = ImageProcessor().thin(bitmapconv!!)
-            convert_map_img_view.setImageBitmap(thinnedBitmap)
 
+            // Thin bitmap
+            var thinnedBitmap = ImageProcessor().thin(bitmapconv!!)
+
+            // Display thinned bitmap
+            convert_map_img_view.setImageBitmap(thinnedBitmap)
 
             // Save file of thinned image
             if(SAVE_THINNED_IMAGE){
@@ -216,13 +227,14 @@ class ConvertActivity : AppCompatActivity() {
             cancel_img_btn.visibility = View.VISIBLE
 
             if(doneConvert){
+
                 // Intent for convert activity
                 val displayModelIntent = Intent(this, DisplayModelActivity::class.java)
-
 
                 // Start convert intent
                 this.startActivity(displayModelIntent)
             }
+
             // Set doneConvert to true so when the done button is hit
             // a second time in a row the next intent is launched
             doneConvert = true
@@ -254,17 +266,13 @@ class ConvertActivity : AppCompatActivity() {
         }
     }
 
+    // Show image file in image view
     private fun setPic(path: String) {
-        // Get the dimensions of the View
-        val targetW = convert_map_img_view.width
-        val targetH = convert_map_img_view.height
 
-        // Get the dimensions of the bitmap
+        // Get the bitmap
         val bmOptions = BitmapFactory.Options()
-        //bmOptions.inJustDecodeBounds = true
         BitmapFactory.decodeFile(path, bmOptions)
-        //val photoW = bmOptions.outWidth
-        //val photoH = bmOptions.outHeight
+
 
         // Determine how much to scale down the image
         val scaleFactor = Math.min(1, 1)

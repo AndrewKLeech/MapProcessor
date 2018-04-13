@@ -54,8 +54,7 @@ internal class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
                     dy = dy * -1
                 }
 
-                mRenderer.setAngle(
-                        mRenderer.getAngle() + (dx + dy) * TOUCH_SCALE_FACTOR)
+                mRenderer.setAngle(mRenderer.getAngle() + (dx + dy) * TOUCH_SCALE_FACTOR)
                 requestRender()
             }
         }

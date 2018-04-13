@@ -7,8 +7,7 @@
     android:layout_height="match_parent"
 
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-
+    
     <ImageView
         android:id="@+id/convert_map_img_view"
         android:layout_width="600dp"
@@ -89,6 +88,9 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_clear_black_24dp" />
 
+    <!-- hue_min, hue_max, sat_min, and sat_max are used for debugging to find
+         segmentation ranges -->
+
     <SeekBar
         android:id="@+id/hue_min"
         android:layout_width="250dp"
@@ -98,6 +100,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:max="180"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/hue_max"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -112,12 +115,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:max="180"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/convert_map_img_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <SeekBar
-        android:id="@+id/satmin"
+        android:id="@+id/sat_min"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -125,19 +129,21 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:max="255"
-        app:layout_constraintBottom_toTopOf="@+id/satmax"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/sat_max"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/hue_max" />
 
     <SeekBar
-        android:id="@+id/satmax"
+        android:id="@+id/sat_max"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="260dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:max="255"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/convert_map_img_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
