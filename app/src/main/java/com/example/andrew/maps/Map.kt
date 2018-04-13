@@ -49,7 +49,7 @@ class Map {
     private val vertexStride = COORDS_PER_VERTEX * FLOAT_SIZE // 4 bytes per vertex
 
     // For testing
-    val useGenExample = true
+    val useGenExample = false
 
     init {
 
@@ -75,6 +75,22 @@ class Map {
             }
             ROWS = height
             COLS = width
+        }else{
+            var heightVal = 0.0
+            var pos = 0
+            var y = -1.0
+            for(i in 0 until ROWS){
+                var x = -1.0
+                for(j in 0 until COLS){
+                    triangleCoords[pos] = x.toFloat()
+                    triangleCoords[pos+1] = y. toFloat()
+                    triangleCoords[pos+2] = heightVal.toFloat() * (Math.random() + 0.01).toFloat()
+                    pos += 3
+                    x += 0.1
+                }
+                heightVal -= 0.1
+                y += 0.1
+            }
         }
 
         setUpIndices()
@@ -178,7 +194,7 @@ class Map {
 
         // Draw
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, ibo[0]);
-        GLES20.glDrawElements(GLES20.GL_LINE_STRIP, indices.size, GLES20.GL_UNSIGNED_SHORT, 0)
+        GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, indices.size, GLES20.GL_UNSIGNED_SHORT, 0)
 
         GLES20.glBindBuffer(GLES20.GL_ARRAY_BUFFER, 0)
         GLES20.glBindBuffer(GLES20.GL_ELEMENT_ARRAY_BUFFER, 0)
@@ -198,13 +214,15 @@ class Map {
         internal const val COORDS_PER_VERTEX = 3
 
         // Number of rows of coordinates to be put into the triangle strip
-        private var ROWS = 6
+        private var ROWS = 10
 
         // Number of columns of coordinates to be put into the triangle strip
         internal var COLS = 11
 
+
+        internal var triangleCoords = FloatArray(ROWS*COLS* COORDS_PER_VERTEX)
         // ROWS * COLS will equal the total number of coordinates
-        internal var triangleCoords = floatArrayOf(
+        /*internal var triangleCoords = floatArrayOf(
                 // in counterclockwise order:
                 -0.5f, 0.5f, -0.5f, // 1
                 -0.4f, 0.5f, -0.5f, // 2
@@ -277,7 +295,7 @@ class Map {
                 0.3f, 0.0f, -0.5f, // 64
                 0.4f, 0.0f, -0.5f, // 65
                 0.5f, 0.0f, -0.5f //66
-        )
+        )*/
 
         // Set array size to be the number of points + the number of points excluding the first
         // last row + 2 for each of these rows
