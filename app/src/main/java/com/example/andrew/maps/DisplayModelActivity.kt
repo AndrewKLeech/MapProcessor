@@ -4,7 +4,7 @@ import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 
-class DisplayModel: AppCompatActivity() {
+class DisplayModelActivity: AppCompatActivity() {
 
     private var mGLView: GLSurfaceView? = null
 

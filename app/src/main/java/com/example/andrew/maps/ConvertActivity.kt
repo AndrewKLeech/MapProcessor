@@ -26,13 +26,22 @@ class ConvertActivity : AppCompatActivity() {
 
     // Paths for photo files
     private var mSrcPhotoPath: String? = null
-    var mCurrentPhotoPath: String? = null
+    private var mCurrentPhotoPath: String? = null
 
     // Bitmap of segmented image
     var bitmapconv: Bitmap? = null
-    var hsV_lower = 89.0
-    var hsV_upper = 106.0
-    var hSv_lower = 0.0
+
+    // H
+    var Hsv_lower = 76.0
+    var Hsv_upper = 120.0
+
+    // S
+    var hSv_lower = 15.0
+    var hSv_upper = 255.0
+
+    // V
+    var hsV_lower = 90.0
+    var hsV_upper = 152.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -54,11 +63,26 @@ class ConvertActivity : AppCompatActivity() {
         val builder = StrictMode.VmPolicy.Builder()
         StrictMode.setVmPolicy(builder.build())
 
+
+        // Set starting progress of Value min bar to hsV_lower
+        hue_min.progress = Hsv_lower.toInt()
+
+        // Set starting progress of Value max bar to hsV_upper
+        hue_max.progress = Hsv_upper.toInt()
+
+        // Set starting progress of Value min bar to hsV_lower
+        satmin.progress = hSv_lower.toInt()
+
+        // Set starting progress of Value max bar to hsV_upper
+        satmax.progress = hSv_upper.toInt()
+
         // Set starting progress of Value min bar to hsV_lower
         valLowerSeekBar.progress = hsV_lower.toInt()
 
         // Set starting progress of Value max bar to hsV_upper
         valUpperSeekBar.progress = hsV_upper.toInt()
+
+
 
         // Listener for valLowerSeekBar
         valLowerSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -66,7 +90,7 @@ class ConvertActivity : AppCompatActivity() {
                 mCurrentPhotoPath = mSrcPhotoPath
                 hsV_lower = valLowerSeekBar.progress.toDouble()
                 setPic(mCurrentPhotoPath!!)
-                Log.d("I", "Value is: " + hsV_lower.toString())
+                Log.d("I", "hsV_lower is: " + hsV_lower.toString())
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {
                 // Do nothing
@@ -83,7 +107,75 @@ class ConvertActivity : AppCompatActivity() {
                 mCurrentPhotoPath = mSrcPhotoPath
                 hsV_upper = valUpperSeekBar.progress.toDouble()
                 setPic(mCurrentPhotoPath!!)
-                Log.d("I", "Value is: " + hsV_upper.toString())
+                Log.d("I", "hsV_upper is: " + hsV_upper.toString())
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // Do nothing
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                //Do nothing
+            }
+        })
+
+        // Listener for hue min
+        hue_min.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                mCurrentPhotoPath = mSrcPhotoPath
+                Hsv_lower = hue_min.progress.toDouble()
+                setPic(mCurrentPhotoPath!!)
+                Log.d("I", "Hsv_lower is: " + Hsv_lower.toString())
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // Do nothing
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                //Do nothing
+            }
+        })
+
+        // Listener for hue min
+        hue_max.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                mCurrentPhotoPath = mSrcPhotoPath
+                Hsv_upper = hue_max.progress.toDouble()
+                setPic(mCurrentPhotoPath!!)
+                Log.d("I", "Hsv_upper is: " + Hsv_upper.toString())
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // Do nothing
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                //Do nothing
+            }
+        })
+
+        // Listener for sat min
+        satmin.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                mCurrentPhotoPath = mSrcPhotoPath
+                hSv_lower = satmin.progress.toDouble()
+                setPic(mCurrentPhotoPath!!)
+                Log.d("I", "hSv_lower is: " + hSv_lower.toString())
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar) {
+                // Do nothing
+            }
+
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                //Do nothing
+            }
+        })
+
+        // Listener for sat max
+        satmax.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                mCurrentPhotoPath = mSrcPhotoPath
+                hSv_upper = satmax.progress.toDouble()
+                setPic(mCurrentPhotoPath!!)
+                Log.d("I", "hSv_upper is: " + hSv_upper.toString())
             }
             override fun onStartTrackingTouch(seekBar: SeekBar) {
                 // Do nothing
@@ -110,7 +202,6 @@ class ConvertActivity : AppCompatActivity() {
             var thinnedBitmap = ImageProcessor().thin(bitmapconv!!)
             convert_map_img_view.setImageBitmap(thinnedBitmap)
 
-            //convert_map_img_view.setImageBitmap(ImageProcessor().thin2(ImageProcessor().thin(bitmapconv!!)))
 
             // Save file of thinned image
             if(SAVE_THINNED_IMAGE){
@@ -126,7 +217,7 @@ class ConvertActivity : AppCompatActivity() {
 
             if(doneConvert){
                 // Intent for convert activity
-                val displayModelIntent = Intent(this, DisplayModel::class.java)
+                val displayModelIntent = Intent(this, DisplayModelActivity::class.java)
 
 
                 // Start convert intent
@@ -188,7 +279,7 @@ class ConvertActivity : AppCompatActivity() {
         val bitmap_cpy = bitmap.copy(bitmap.config, true)
 
         // segment image
-        bitmapconv =  ImageProcessor().segment(bitmap_cpy, hSv_lower, hsV_lower, hsV_upper)
+        bitmapconv =  ImageProcessor().segment(bitmap_cpy, hsV_lower, hsV_upper, Hsv_lower, Hsv_upper, hSv_lower, hSv_upper)
 
         // Show bitmap
         convert_map_img_view.setImageBitmap(bitmapconv)

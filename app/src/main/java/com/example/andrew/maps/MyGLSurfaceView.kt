@@ -30,8 +30,6 @@ internal class MyGLSurfaceView(context: Context) : GLSurfaceView(context) {
         setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
     }
 
-
-
     override fun onTouchEvent(e: MotionEvent): Boolean {
         // MotionEvent reports input details from the touch screen
         // and other input controls. In this case, you are only

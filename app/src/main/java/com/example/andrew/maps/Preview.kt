@@ -25,7 +25,7 @@ class Preview(context: Context, camera:Camera) : SurfaceView(context), SurfaceHo
 
     init{
         mCamera = camera
-        Log.d("SUCCESS", "mCamera is " + mCamera)
+        Log.d("SUCCESS", "mCamera is $mCamera")
         mCamera!!.setDisplayOrientation(90)
         mHolder = holder
         mHolder!!.addCallback(this)
@@ -50,8 +50,8 @@ class Preview(context: Context, camera:Camera) : SurfaceView(context), SurfaceHo
             }
 
             try {
-                mCamera!!.cancelAutoFocus();
-                mCamera!!.parameters = parameters;
+                mCamera!!.cancelAutoFocus()
+                mCamera!!.parameters = parameters
                 mCamera!!.startPreview()
                 mCamera!!.autoFocus({ b: Boolean, camera: Camera ->
                     @Override
@@ -74,8 +74,6 @@ class Preview(context: Context, camera:Camera) : SurfaceView(context), SurfaceHo
         return true
     }
 
-
-
     override fun surfaceCreated(surfaceHolder: SurfaceHolder?) {
        try{
            //when the surface is created, set the camera to draw images here
@@ -85,7 +83,6 @@ class Preview(context: Context, camera:Camera) : SurfaceView(context), SurfaceHo
            Log.d("ERROR", "Camera error on surfaceCreated " + e.message)
        }
     }
-
 
     override fun surfaceDestroyed(p0: SurfaceHolder?) {
         mCamera!!.stopPreview()
@@ -112,7 +109,8 @@ class Preview(context: Context, camera:Camera) : SurfaceView(context), SurfaceHo
         }
     }
 
-    fun clamp(x: Int, min: Int, max: Int): Int {
+    // https://stackoverflow.com/questions/17993751/whats-the-correct-way-to-implement-tap-to-focus-for-camera#23754117
+    private fun clamp(x: Int, min: Int, max: Int): Int {
         if (x > max) {
             return max
         }
@@ -120,7 +118,9 @@ class Preview(context: Context, camera:Camera) : SurfaceView(context), SurfaceHo
             min
         } else x
     }
-    fun calculateTapArea(x: Float, y: Float, coefficient: Float): Rect {
+
+    private fun calculateTapArea(x: Float, y: Float, coefficient: Float): Rect {
+
         val areaSize = java.lang.Float.valueOf(210 * coefficient).toInt()
 
         val left = clamp(x.toInt() - areaSize / 2, 0, this.width - areaSize)

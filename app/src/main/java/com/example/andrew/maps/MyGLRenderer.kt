@@ -25,7 +25,7 @@ class MyGLRenderer : GLSurfaceView.Renderer {
     // For rotation
     private var mRotationMatrix: FloatArray = FloatArray(16)
 
-
+    // Angle of rotation
     @Volatile
     var mAngle: Float = 0.toFloat()
 
@@ -43,7 +43,6 @@ class MyGLRenderer : GLSurfaceView.Renderer {
 
         // initialize a triangle
         mMap = Map()
-
     }
 
     fun loadShader(type: Int, shaderCode: String): Int {

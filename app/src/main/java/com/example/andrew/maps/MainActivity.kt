@@ -24,11 +24,13 @@ class MainActivity : AppCompatActivity() {
             System.loadLibrary("native-lib")
         }
     }
-    var mCurrentPhotoPath: String? = null
-    var photoFile: File? = null
-    var mCamera:Camera? = null
-    var mPreview:Preview? = null
+
+    private var mCurrentPhotoPath: String? = null
+    private var photoFile: File? = null
+    private var mCamera:Camera? = null
+    private var mPreview:Preview? = null
     private val READ_REQUEST_CODE = 42
+
     @SuppressLint("SimpleDateFormat")
     @Throws(IOException::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,10 +53,10 @@ class MainActivity : AppCompatActivity() {
             camera_view.addView(mPreview)
         }
 
-
         // On click listener for capture image (capture_img)
         capture_img.setOnClickListener {
             capture()
+
         }
         // On click listener for convert button (convert_btn)
         done_img.setOnClickListener {
@@ -110,7 +112,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun imageSelected(copy: Boolean){
+    private fun imageSelected(copy: Boolean){
+
         Toast.makeText(this, "Converting image", Toast.LENGTH_SHORT).show()
 
         // Reset image buttons so if user goes back they are set right
@@ -134,7 +137,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Decide what buttons are visible on screen
-    fun captureBtnVisible(b:Boolean){
+    private fun captureBtnVisible(b:Boolean){
+
         // If true show capture button and gallery button
         if(b){
             capture_img.visibility = View.VISIBLE
@@ -155,7 +159,7 @@ class MainActivity : AppCompatActivity() {
      * Adapted from https://developer.android.com/guide/topics/providers/document-provider.html
      * Fires an intent to spin up the "file chooser" UI and select an image.
      */
-    fun performFileSearch() {
+    private fun performFileSearch() {
 
         // ACTION_OPEN_DOCUMENT is the intent to choose a file via the system's file
         // browser.

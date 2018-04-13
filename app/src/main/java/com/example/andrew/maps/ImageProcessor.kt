@@ -8,12 +8,17 @@ import org.opencv.imgproc.Imgproc.*
 
 class ImageProcessor {
 
+    // Blur types
+    val GAUSSIAN = 0
+    val MEDIAN = 1
+    val BLUR = 2
+
     /*
     * segment() segments a bitmap by color using arguments passed to set the color range
     * in which to segment the bitmap.
     * segment() returns a black and white Bitmap.
     */
-    fun segment(src: Bitmap, hSv_lower:Double, hsV_lower:Double, hsV_upper:Double): Bitmap {
+    fun segment(src: Bitmap, hsV_lower:Double, hsV_upper:Double, Hsv_lower: Double, Hsv_upper: Double, hSv_lower: Double, hSv_upper: Double): Bitmap {
 
         // Initialize Mats
         var mat = Mat()
@@ -29,17 +34,22 @@ class ImageProcessor {
         var size = Size(1200.0, 900.0)
         Imgproc.resize(mat, resized, size)
 
+        // Create new bitmap to return
+        var blured: Mat
+
+        blured = blur(resized, GAUSSIAN)
+
         //Change color space to has
-        Imgproc.cvtColor(resized, hsvMat, Imgproc.COLOR_BGR2HSV, 3) //3 is HSV Channel
+        Imgproc.cvtColor(blured, hsvMat, Imgproc.COLOR_BGR2HSV, 3) //3 is HSV Channel
 
         // Copy hsvMat to findBlack so they are the same size
         hsvMat.copyTo(findBlack)
 
         // Try get features that we will remove from the image
-        Core.inRange(hsvMat, Scalar(0.0, hSv_lower, hsV_lower), Scalar(180.0, 255.0, hsV_upper), findBlack)
+        Core.inRange(hsvMat, Scalar(Hsv_lower, hSv_lower, hsV_lower), Scalar(Hsv_upper, hSv_upper, hsV_upper), findBlack)
 
         // Create new bitmap to return
-        var newBitmap: Bitmap = Bitmap.createBitmap(findBlack.width(),findBlack.height(), src.config)
+        var newBitmap: Bitmap = Bitmap.createBitmap(blured.width(),blured.height(), src.config)
 
         // Turn mat back to bitmap
         Utils.matToBitmap(findBlack, newBitmap)
@@ -68,16 +78,15 @@ class ImageProcessor {
         // New mat that will hold the output skeleton
         var skel = Mat.zeros(ch1.size(), ch1.type())
         var temp = Mat(ch1.size(), ch1.type())
+        var erode = Mat(ch1.size(), ch1.type())
 
-
-        // structured element (kernel)
-        /*
+        /* structured element (kernel)
                   ___ ___ ___
-                 | 0 | 1 | 0 |
+                 |   | 1 |   |
                  |___|___|___|
                  | 1 | 1 | 1 |
                  |___|___|___|
-                 | 0 | 1 | 0 |
+                 |   | 1 |   |
                  |___|___|___|
          */
         val element = Imgproc.getStructuringElement(Imgproc.MORPH_CROSS, Size(3.0,3.0))
@@ -88,11 +97,17 @@ class ImageProcessor {
         // Do thinning
         do {
             // MORPH_OPEN = erode -> dilate
-            Imgproc.morphologyEx(ch1, temp, Imgproc.MORPH_OPEN, element)
+            /*Imgproc.morphologyEx(ch1, temp, Imgproc.MORPH_OPEN, element)
             Core.bitwise_not(temp, temp)
             Core.bitwise_and(ch1, temp, temp)
             Core.bitwise_or(skel, temp, skel)
-            Imgproc.erode(ch1, ch1, element)
+            Imgproc.erode(ch1, ch1, element)*/
+
+            Imgproc.erode(ch1, erode, element)
+            Imgproc.dilate(erode, temp, element)
+            Core.subtract(ch1, temp, temp)
+            Core.bitwise_or(skel, temp, skel)
+            erode.copyTo(ch1)
 
             // get max value of mat being thinned
             var max: Double?
@@ -113,6 +128,7 @@ class ImageProcessor {
         return newBitmap
     }
 
+    /* unused function for a different approach to thinning*/
     fun thin2(bitmap: Bitmap): Bitmap{
 
         var hierarchy = Mat()
@@ -154,5 +170,34 @@ class ImageProcessor {
 
         // return thinned bitmap
         return newBitmap
+    }
+
+
+    fun blur(mat: Mat, blurType: Int): Mat{
+
+        var blur = Mat(mat.size(), mat.type())
+
+        // Gaussian Blur
+        if(blurType == 0) {
+            for (i in 1 until 10 step 2) {
+                GaussianBlur(mat, blur, Size(i.toDouble(), i.toDouble()), 0.0, 0.0)
+            }
+        }
+
+        // Median Blur
+        if(blurType == 1) {
+            for (i in 1 until 10 step 2) {
+                medianBlur(mat, blur, i)
+            }
+        }
+
+        // Blur
+        if(blurType == 2) {
+            for (i in 1 until 10 step 2) {
+                blur(mat, blur, Size(i.toDouble(), i.toDouble()))
+            }
+        }
+
+        return blur
     }
 }

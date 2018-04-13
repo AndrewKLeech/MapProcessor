@@ -34,7 +34,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".DisplayModel"
+            android:name=".DisplayModelActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <provider
